@@ -29,6 +29,14 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;}
 
+	a.linkies{
+		font-size: 2em;	
+			content: '';
+			width: 3.25em;
+			height: 2px;
+			margin: 0.7em 0 1em 0;
+			border-radius: 2px;
+	}
 body {
 	line-height: 1;
 }
@@ -2631,7 +2639,7 @@ input, select, textarea {
 			}
 
 /* Section/Article */
-
+	
 	section.special, article.special {
 		text-align: center;
 	}
