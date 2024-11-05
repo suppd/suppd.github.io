@@ -1,101 +1,131 @@
-<!DOCTYPE HTML>
-<!--
-	Stellar by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title></title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edwin Slottje| Game Developer</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="script.js" defer></script>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <h1>Edwin Slottje</h1>
+            <p>Game Developer</p>
+            <nav>
+                <a href="#projects">Projects</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="https://github.com/Suppd" target="_blank" aria-label="GitHub">
+                    <img src="images\Icons\github-142-svgrepo-com.svg" alt="GitHub Icon" class="social-icon">
+                </a>
+                <a href="https://linkedin.com/in/your-profile" target="_blank" aria-label="LinkedIn">
+                    <img src="images\Icons\linkedin-svgrepo-com.svg" alt="LinkedIn Icon" class="social-icon">
+                </a>
+                <button class="resume-button">Resume ↓</button>
+            </nav>
+        </header>
 
-				<!-- Header -->
-					<header id="header">
-						<h1>My Projects!</h1>
-						<p></p>
-					</header>
-
-				<!-- Main -->
-					<div id="main">
-
-						<!-- Content -->
-							<section id="content" class="main">
-								<!--<span class="image main"><img src="images/james-harrison-vpOeXr5wmR4-unsplash.jpg" alt="" /></span>-->
-								<h2>Have A look!</h2>
-								<p>This page contains my personal, school and professional projects and some information about them with source code.</p>
-								<p></p>
-								<h2></h2>
-								<p></p>
-							<!-- Image -->
-							<section>
-								<div class="box alt=">
-									<h3>School Projects</h3>
-									<div class="row gtr-uniform">
-										
-										<p><span class="image left"></span><iframe width="560" height="315" src="https://www.youtube.com/embed/dqwdzv6-50M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><span><p>Riley if you're ready, is the third project of my first year as a student, eventhough we managed to deliver a product and things worked out in the end this is the first time i had experienced a team without a clear leader and almost no cohesion so this project was a struggle but we managed to complete it with the 6 of us, 3 designers , 2 artists , 1 engineer (me). </p>
-										
-										<p><span class="image left"></span><iframe width="560" height="315" src="https://www.youtube.com/embed/YGld3XibRKU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><span><p>Snowman Golf was the fourth and last project of my first year as a student and in this project i used my selfmade 2D physics engine. we created this game in a week with 6 people, 3 designers, 2 artists, 1 engineer (me).</p></span>
-										<p><span class="image left"></span><iframe width="560" height="315" src="https://www.youtube.com/embed/OG70TKSNVL4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><span><p>This is the fourth project in my second year, We worked with a team of 7 to make this game over the span of 9 weeks 3 artists, 3 designers, and one engineer me ofcourse.</p></span>
-				
-									</div>
-									
-									<br>
-									<span><p><a href="https://github.com/suppd" class="icon brands fa-github alt"><span class="label">GitHub</span></a></p></span>
-									<p>My Projects are on github!</p> 
-								</div>
-								
-							</section>
-
-							</section>
-							
-
+        <section id="projects" class="projects-preview">
+            <h2>Projects</h2>
+            <div class="project-gallery">
+				<div class="project-card">
+                        <video src="videos\Eggsplosion Official Trailer.mp4" autoplay muted loop playsinline class="project-video"></video>
+                        <div class="project-info">
+                            <div class="icon-bar">
+                                <span class="icon">👤 5</span>
+                                <span class="icon">⏳ 12 Weeks</span>
+                                <span class="icon">🔧 Unity (C#)</span>
+                            </div>
+                            <h3>Eggsplosion (2023)</h3>
+                            <p class="project-role">Lead programmer, Gameplay Programmer, Back-end Programmer</p>
+                            <p>A fast-paced arcade-arena shooter with both local and online multiplayer support.</p>
+                            <a href="project1-link.html" target="">View Project</a>
+                        </div>
+                    </div>
+                <div class="project-card">
+                    <img src="images\SnowmanGolf.gif" alt="Project 2 GIF">
+                    <div class="project-info">
+                        <div class="icon-bar">
+                            <span class="icon">👤 4</span>
+                            <span class="icon">⏳ 6 Weeks</span>
+                            <span class="icon">🔧 Unity (C#)</span>
+                        </div>
+                        <h3>Snowman Golf</h3>
+                        <p class="project-role">Gameplay-Backend Programmer</p>
+                        <p>A fun physics based puzzle game with a festive theme, made with help of my own 2D physics engine.</p>
+                        <a href="project2-link" target="_blank">View Project</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <img src="images\3DrenderingTerrain.gif" alt="Project 3 GIF">
+					<div class="project-info">
+                        <div class="icon-bar">
+                            <span class="icon">👤 1</span>
+                            <span class="icon">⏳ 6 Weeks</span>
+                            <span class="icon">🔧 Unity (C#)</span>
+                        </div>
+						<h3>3D Rendering Engine</h3>
+                        <p class="project-role">Programmer</p>
+						<p>Brief description of the project.</p>
+						<a href="project3-link" target="_blank">View Project</a>
 					</div>
+				</div>
+                <div class="project-card">
+                    <img src="images\PositiveHealthGame01.gif" alt="Project 4 GIF">
+                    <div class="project-info">
+                        <div class="icon-bar">
+                            <span class="icon">👤 1</span>
+                            <span class="icon">⏳ 6 Weeks</span>
+                            <span class="icon">🔧 Unity (C#)</span>
+                        </div>
+                        <h3>Positive Health Game</h3>
+                        <p class="project-role">Gameplay Programmer</p>
+                        <p>A story based game made for MST hospital in Enschede.</p>
+                        <a href="project4-link" target="_blank">View Project</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-	
-					<!-- Footer -->
-					<footer id="footer">
+        <section id="about" class="about-me">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <img src="images\Edwin1.jpg" alt="Edwin Slottje Portrait" class="portrait">
+                <p>I'm a game developer with experience in Unity, Unreal Engine, and game design. I specialize in creating engaging, immersive game experiences. With a strong foundation in both technical and creative aspects of game development, I enjoy the challenge of bringing ideas to life. My goal is to craft interactive experiences that are both fun and meaningful.</p>
+            </div>
+        </section>
 
-						<section>
-							<section>
-								<h2>Contact Me!</h2>
-								<dl class="alt">
-									<dt>Address</dt>
-									<dd>Haaksbergen, Overijssel &bull; Netherlands</dd>
-									<dt>Phone</dt>
-									<dd>(+31) 0621626242</dd>
-									<dt>Email</dt>
-									<dd><a href="#">edwinslottje@gmail.com</a></dd>
-								</dl>
-								<ul class="icons">
-									<li><a href="https://twitter.com/edwinslottje" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
-									<li><a href="https://www.instagram.com/edwinslottje9/" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
-									<li><a href="https://github.com/suppd" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
-									
-								</ul>
-							</section>
-							
-						<p class="copyright">&copy; Suppd. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
-					</footer>
+        <section id="education" class="education">
+            <h2>Education</h2>
+            <p><strong>University Name</strong> – Bachelor's in Game Development, 20XX - 20XX</p>
+            <p><strong>Additional Training</strong> – Relevant courses or certifications in game development, programming, or design.</p>
+        </section>
 
-			</div>
+        <section id="technical-experience" class="technical-experience">
+            <h2>Technical Experience</h2>
+            <ul>
+                <li>Unity (Advanced)</li>
+                <li>Unreal Engine (Intermediate)</li>
+                <li>C# and C++ Programming</li>
+                <li>3D Modeling and Animation (Blender)</li>
+                <li>Version Control (Git)</li>
+            </ul>
+        </section>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-	</body>
+        <section id="contact">
+            <h2>Contact</h2>
+            <form action="https://formspree.io/f/your-form-id" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </section>
+    </div>
+    <footer>
+        <p>&copy; 2024 Edwin Slottje</p>
+    </footer>
+</body>
 </html>
