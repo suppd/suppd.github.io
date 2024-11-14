@@ -406,6 +406,9 @@ footer {
 .about-content p{
     color: lightgray;
 }
+.project-info-card ul{
+    line-height: 20px;
+}
 /* Project Specific page styling */
 .project-description {
     margin-top: 2rem;
@@ -420,5 +423,16 @@ footer {
     color:lightgray;
     line-height: 1.6;
     margin-top: 0.5rem;
+}
+
+.project-description img{
+    align-content: center;
+}
+.LeaderBoardVideo, .LobbySystemVideo{
+    margin: 0 auto; 
+    display: block;
+    min-width: 400px;
+    width: 50wh;
+    height: 50vh;
     
 }

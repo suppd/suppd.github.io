@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let currentSection = "";
 
         sections.forEach((section) => {
-            const sectionTop = section.offsetTop - 500; //adjust offset top if bugging 
+            const sectionTop = section.offsetTop - 400; //adjust offset top if bugging 
             const sectionHeight = section.clientHeight;
             if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
                 currentSection = section.getAttribute("id");
