@@ -185,7 +185,7 @@ header nav a.active::after {
     flex-shrink: 0; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     
-    min-height: 400px; /* Set minimum height */
+    min-height: 400px;
 }
 
 .project-video, .project-card img {
@@ -196,13 +196,14 @@ header nav a.active::after {
     margin: auto;
     border-radius: 8px 8px 0 0;
 }
-
+.project-media.offset-medium img {
+    transform: translateY(-px);
+}
 .project-info {
     width: 100%;
     height: 30%; 
     padding: 15px;
     text-align: center;
-    /* background-color: #1c1c1c; background-color: #1c1c1c; */
     color: #ffffff;
     display: flex;
     flex-direction: column;
@@ -263,15 +264,10 @@ header nav a.active::after {
     border-radius: 4px;
     text-decoration: none;
     transition: background-color 0.3s ease;
-    margin-top: auto; /* Ensures button stays at the bottom */
+    margin-top: auto; 
 }
 
-/* .project-info img {
-    position: absolute;
-    width: 10%;
-    margin-left:87%;
-    margin-bottom: 10%;
-} */
+
 
 .arrow {
     padding: 0%;
@@ -321,7 +317,7 @@ header nav a.active::after {
 .education h2, .technical-experience h2{
     font-size: 3rem;
 }
-/* Education and Technical Experience sections */
+
 .education, .technical-experience {
     padding: 3rem 1rem;
     text-align: center;
@@ -388,20 +384,20 @@ footer {
 }
 
 
-/* Container styling */
+
 .project-page {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Main image styling */
+
 .project-image img {
     width: 100%;
     border-radius: 8px;
 }
 
-/* Info cards styling */
+
 .info-cards {
     display: flex;
     gap: 2rem;
@@ -434,7 +430,7 @@ footer {
 .project-info-card ul{
     line-height: 20px;
 }
-/* Project Specific page styling */
+
 .project-description {
     margin-top: 2rem;
 }
