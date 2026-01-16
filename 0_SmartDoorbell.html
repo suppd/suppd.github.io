@@ -69,12 +69,20 @@
         </div>
     </div>
 
-    <!-- Additional Text Sections -->
     <div class="project-description">
-        <!-- <h3>Project Description</h3>
-        <p> </p> -->
-        
-       
+        <h3>Project Description</h3>
+        <p>Project includes a Raspberry Pi with a camera module hooked up to the existing front doorbell, and a Telegram bot to send notifications when the doorbell is pressed.
+            Then,the Raspberry Pi captures an image using the camera module and sends it to the user via the Telegram bot.
+            With a link to the website hosted on a public domain using tailscale, where the user can view a live feed from the camera.
+        </p>
+        <p>The project is still ongoing with me planning to add recording with highlights of events (such as motion detection or doorbell presses) in a rewindable timeline.
+            The doorbell system also has to be mounted on the front door in a weatherproof enclosure.
+        </p>
+        <p>How the doorbell works: first the doorbell software I made is ran as a service on the Raspberry Pi (which automatically starts upon startup or restart), which listens for a signal from the existing doorbell using the red and blue wires which read the voltage.
+            When a signal is received or a motion is detected, it triggers the camera to take a picture and sends it to the Telegram bot using the Telegram API and bot number.
+            Then the bot posts a message with the image and a link to the live feed on the website in a Telegram chatroom. Then also a chime script runs which plays a chime on a google home in the house using google's API.
+            furthermore, the website is hosted on the Raspberry and is accessible via a public domain using Tailscale. The software also includes error handling to ensure that the system continues to function even if there are issues with the camera or API's.
+        </p>
     </div>
 </div>
 </body>
