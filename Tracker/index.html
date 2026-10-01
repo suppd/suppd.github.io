@@ -5,26 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="HabitTracker">
-  <meta name="theme-color" content="#fcfaf7">
-  <title>Bullet Journal Habit Tracker</title>
+  <meta name="apple-mobile-web-app-title" content="HabitJournal">
+  <meta name="theme-color" content="#f7f4ee">
+  <title>Monthly Habit Tracker</title>
 
-  <!-- Google Fonts: Caveat (Bullet journal script) & Space Mono / Plus Jakarta Sans -->
+  <!-- Google Fonts: Caveat & Plus Jakarta Sans & Space Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS & Lucide Icons -->
+  <!-- Tailwind CSS, Lucide Icons, html2canvas -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     :root {
-      --bg-journal: #faf7f2;
-      --paper-grid-dot: #dcd6ca;
-      --ink-primary: #2d2a26;
-      --border-journal: #2f2a24;
+      --bg-journal: #f7f4ee;
+      --paper-grid-dot: #d8d1c4;
+      --ink-primary: #2d2824;
+      --border-journal: #312b25;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -53,34 +53,35 @@
       font-family: 'Space Mono', monospace;
     }
 
-    /* Dot grid texture */
+    /* Cozy Bullet Journal Paper Dot Grid */
     .bujo-paper {
       background-color: #fbf9f5;
-      background-image: radial-gradient(var(--paper-grid-dot) 1.2px, transparent 1.2px);
+      background-image: radial-gradient(var(--paper-grid-dot) 1.25px, transparent 1.25px);
       background-size: 16px 16px;
     }
 
-    /* Outlines matching the user screenshot */
-    .bujo-box-border {
-      border: 1.75px solid #2f2a24;
-      box-shadow: 2px 2px 0px rgba(47, 42, 36, 0.12);
+    /* Clean Journal Outlines matching physical notebook */
+    .bujo-box {
+      border: 1.75px solid #2d2824;
+      box-shadow: 2px 2px 0px rgba(45, 40, 36, 0.12);
     }
 
-    /* Fine-tuned grid styling for mobile fit without horizontal scroll */
-    .habit-grid {
-      display: grid;
-      grid-template-columns: 24px repeat(12, minmax(0, 1fr));
-      width: 100%;
+    .bujo-button-shadow {
+      box-shadow: 2px 2px 0px #2d2824;
+    }
+    .bujo-button-shadow:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #2d2824;
     }
 
-    .grid-cell {
+    /* Interactive larger touch squares */
+    .cal-cell {
+      min-height: 48px;
       aspect-ratio: 1 / 1;
-      min-width: 0;
-      transition: transform 0.08s ease, background-color 0.15s ease;
+      transition: transform 0.08s ease, filter 0.12s ease;
     }
-    
-    .grid-cell:active {
-      transform: scale(0.90);
+    .cal-cell:active {
+      transform: scale(0.93);
     }
 
     .no-scrollbar::-webkit-scrollbar {
@@ -91,37 +92,38 @@
       scrollbar-width: none;
     }
 
-    @keyframes springIn {
-      0% { opacity: 0; transform: scale(0.95) translateY(8px); }
+    @keyframes springModal {
+      0% { opacity: 0; transform: scale(0.94) translateY(6px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .modal-animate {
-      animation: springIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .modal-pop {
+      animation: springModal 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
 </head>
 
-<body class="flex flex-col bujo-paper selection:bg-rose-200">
-  <!-- Top Navigation Bar: Structured in flex wrap with proper gap so items NEVER overlap -->
-  <header class="sticky top-0 z-30 bg-[#faf7f2]/95 backdrop-blur-md border-b border-[#e5dfd2] px-3 pt-[calc(var(--safe-top)+8px)] pb-2.5 shadow-xs">
-    <div class="max-w-xl mx-auto flex items-center justify-between gap-2">
+<body class="flex flex-col bujo-paper selection:bg-rose-200 text-stone-900 pb-[calc(var(--safe-bottom)+12px)]">
+
+  <!-- Sticky Top Header: Habit switcher, month jump, and settings -->
+  <header class="sticky top-0 z-30 bg-[#f7f4ee]/95 backdrop-blur-md border-b border-[#e4ded2] px-3.5 pt-[calc(var(--safe-top)+10px)] pb-3 shadow-xs">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-2">
       
-      <!-- Habit Selector with clear boundaries -->
+      <!-- Habit Selector -->
       <div class="flex items-center gap-1.5 min-w-0">
-        <span class="text-xl sm:text-2xl font-handwriting font-bold tracking-tight text-stone-800 shrink-0">Habit:</span>
+        <span class="text-2xl font-handwriting font-bold tracking-tight text-stone-800 shrink-0">Habit:</span>
         <div class="relative">
-          <button id="habitDropdownBtn" class="flex items-center gap-1.5 px-2.5 py-1 bg-white bujo-box-border rounded-lg font-bold text-xs sm:text-sm tracking-wide uppercase text-stone-900 hover:bg-stone-50 active:scale-95 transition">
-            <span id="currentHabitName" class="truncate max-w-[90px] sm:max-w-[130px]">Running</span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-500 shrink-0"></i>
+          <button id="habitDropdownBtn" class="flex items-center gap-1.5 px-3 py-1 bg-white bujo-box rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wide text-stone-900 hover:bg-stone-50 active:scale-95 transition">
+            <span id="currentHabitLabel" class="truncate max-w-[110px] sm:max-w-[140px]">Running</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-600 shrink-0"></i>
           </button>
-          
-          <!-- Dropdown menu -->
-          <div id="habitDropdownMenu" class="hidden absolute top-full left-0 mt-1.5 w-52 bg-white rounded-xl shadow-xl bujo-box-border py-1.5 z-40">
-            <div id="habitListOptions" class="max-h-56 overflow-y-auto no-scrollbar py-1">
-              <!-- Dynamically populated -->
+
+          <!-- Habit Menu -->
+          <div id="habitDropdownMenu" class="hidden absolute top-full left-0 mt-1.5 w-52 bg-white rounded-xl shadow-xl bujo-box py-1.5 z-40">
+            <div id="habitListContainer" class="max-h-56 overflow-y-auto no-scrollbar py-1">
+              <!-- Populated by JS -->
             </div>
             <div class="border-t border-stone-200 mt-1 pt-1.5 px-2">
-              <button onclick="openNewHabitModal()" class="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-50 rounded-md transition">
+              <button onclick="openNewHabitModal()" class="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-50 rounded-lg transition">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Habit
               </button>
             </div>
@@ -129,26 +131,15 @@
         </div>
       </div>
 
-      <!-- Controls group: Year Selector, Palette and Storage Modal -->
+      <!-- Action Icons (Theme Palette, SQL Storage) -->
       <div class="flex items-center gap-1.5 shrink-0">
-        <!-- Compact Year Picker -->
-        <div class="flex items-center bg-white bujo-box-border rounded-lg px-1 py-0.5">
-          <button onclick="changeYear(-1)" class="p-1 hover:bg-stone-100 rounded text-stone-700 active:scale-90" aria-label="Previous Year">
-            <i data-lucide="chevron-left" class="w-3 h-3"></i>
-          </button>
-          <span id="currentYearDisplay" class="font-mono-num font-bold text-xs px-1 text-stone-900 leading-none">2026</span>
-          <button onclick="changeYear(1)" class="p-1 hover:bg-stone-100 rounded text-stone-700 active:scale-90" aria-label="Next Year">
-            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-          </button>
-        </div>
-
-        <!-- Palette Theme Button -->
-        <button onclick="openPaletteModal()" class="p-1.5 bg-white bujo-box-border rounded-lg text-stone-700 hover:bg-stone-50 active:scale-90" title="Color Themes">
+        <!-- Palette Switcher -->
+        <button onclick="openPaletteModal()" class="p-1.5 bg-white bujo-box rounded-xl text-stone-700 hover:bg-stone-50 active:scale-90 transition" title="Themes">
           <i data-lucide="palette" class="w-4 h-4"></i>
         </button>
 
-        <!-- Data & Settings Modal (SQL / JSON export) -->
-        <button onclick="openSettingsModal()" class="p-1.5 bg-white bujo-box-border rounded-lg text-stone-700 hover:bg-stone-50 active:scale-90" title="Data Backup & SQL">
+        <!-- SQLite / Storage Backup -->
+        <button onclick="openSettingsModal()" class="p-1.5 bg-white bujo-box rounded-xl text-stone-700 hover:bg-stone-50 active:scale-90 transition" title="Data Backup & SQL">
           <i data-lucide="database" class="w-4 h-4"></i>
         </button>
       </div>
@@ -156,130 +147,199 @@
     </div>
   </header>
 
-  <!-- Stats bar -->
-  <div class="max-w-xl mx-auto w-full px-3 pt-2.5 pb-1">
-    <div class="bg-white bujo-box-border rounded-xl py-2 px-3 flex items-center justify-around text-center shadow-xs">
-      <div>
-        <span class="block text-[9px] uppercase font-bold tracking-wider text-stone-400">Days Logged</span>
-        <span id="statTotalDays" class="text-base sm:text-lg font-mono-num font-bold text-stone-800">0</span>
+  <main class="max-w-md mx-auto w-full px-3 pt-3 flex-1 flex flex-col gap-3">
+    
+    <!-- Month Navigator Bar: Compact, clean, zero overlap -->
+    <div class="bg-white bujo-box rounded-2xl p-2.5 flex items-center justify-between shadow-xs">
+      <button onclick="navigateMonth(-1)" class="w-8 h-8 rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center border border-stone-300 active:scale-90 transition" aria-label="Previous Month">
+        <i data-lucide="chevron-left" class="w-4 h-4 text-stone-800"></i>
+      </button>
+
+      <!-- Center Clickable Month & Year Header -->
+      <div class="text-center cursor-pointer group" onclick="openMonthPickerModal()">
+        <div class="flex items-center justify-center gap-1">
+          <h2 id="currentMonthYearHeading" class="text-xl sm:text-2xl font-handwriting font-bold text-stone-900 group-hover:text-purple-800 transition leading-none">
+            October 2026
+          </h2>
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-stone-400 group-hover:text-purple-700"></i>
+        </div>
+        <span class="text-[9px] font-bold uppercase tracking-wider text-stone-400 block mt-0.5">Tap to Jump Month</span>
       </div>
-      <div class="h-6 w-[1px] bg-stone-200"></div>
+
+      <button onclick="navigateMonth(1)" class="w-8 h-8 rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center border border-stone-300 active:scale-90 transition" aria-label="Next Month">
+        <i data-lucide="chevron-right" class="w-4 h-4 text-stone-800"></i>
+      </button>
+    </div>
+
+    <!-- Monthly Summary Bar -->
+    <div class="bg-white bujo-box rounded-2xl py-2 px-3 flex items-center justify-around text-center shadow-xs">
+      <div>
+        <span class="block text-[9px] uppercase font-bold tracking-wider text-stone-400">Days Done</span>
+        <span id="statMonthlyDays" class="text-base font-mono-num font-bold text-stone-800">0</span>
+      </div>
+      <div class="h-6 w-[1.5px] bg-stone-200"></div>
       <div>
         <span class="block text-[9px] uppercase font-bold tracking-wider text-stone-400">Current Streak</span>
-        <span id="statStreak" class="text-base sm:text-lg font-mono-num font-bold text-amber-700">0 <span class="text-[10px] font-normal">days</span></span>
+        <span id="statMonthlyStreak" class="text-base font-mono-num font-bold text-amber-700">0 <span class="text-[10px] font-normal">days</span></span>
       </div>
-      <div class="h-6 w-[1px] bg-stone-200"></div>
+      <div class="h-6 w-[1.5px] bg-stone-200"></div>
       <div>
-        <span class="block text-[9px] uppercase font-bold tracking-wider text-stone-400">Completion</span>
-        <span id="statCompletion" class="text-base sm:text-lg font-mono-num font-bold text-stone-800">0%</span>
+        <span class="block text-[9px] uppercase font-bold tracking-wider text-stone-400">Monthly Rate</span>
+        <span id="statMonthlyRate" class="text-base font-mono-num font-bold text-purple-900">0%</span>
+      </div>
+      <div class="h-6 w-[1.5px] bg-stone-200"></div>
+      <div>
+        <span class="block text-[9px] uppercase font-bold tracking-wider text-stone-400">Total Time</span>
+        <span id="statMonthlyTime" class="text-base font-mono-num font-bold text-stone-800">0m</span>
       </div>
     </div>
-  </div>
 
-  <!-- Main Journal Card: Perfectly fits mobile width without overflow -->
-  <main class="max-w-xl mx-auto w-full px-2.5 py-2.5 flex-1 flex flex-col items-center">
-    <div id="journalCard" class="w-full bg-[#fbf9f5] bujo-box-border rounded-2xl p-2.5 sm:p-4 shadow-sm transition">
+    <!-- The Printable / Saveable Journal Card -->
+    <div id="journalCard" class="w-full bg-[#fbf9f5] bujo-box rounded-2xl p-3 sm:p-4 shadow-sm transition">
       
-      <!-- Top Habit Details mirroring reference printable -->
-      <div class="flex items-center justify-between pb-2.5 border-b border-stone-300 gap-2">
+      <!-- Card Header: Bullet journal banner style -->
+      <div class="flex items-center justify-between pb-2 border-b-2 border-stone-800 gap-2">
         <div>
-          <h1 class="text-3xl sm:text-4xl font-handwriting font-bold tracking-tight text-stone-900 leading-none">Habit Tracker</h1>
-          <p class="text-[10px] sm:text-xs text-stone-500 font-medium">Yearly 365-Day Progression Grid</p>
+          <span class="text-[9px] uppercase font-bold tracking-widest text-stone-400 block">Monthly Habit Tracker</span>
+          <h1 id="bannerHabitTitle" class="text-2xl sm:text-3xl font-handwriting font-bold text-purple-950 leading-tight truncate max-w-[180px]">
+            Running
+          </h1>
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <div class="bg-white px-2 py-0.5 rounded-lg bujo-box-border text-center">
-            <span class="text-[8px] font-bold uppercase tracking-wider block text-stone-400">Year</span>
-            <span id="printableYear" class="font-handwriting font-bold text-lg text-stone-800 leading-none">2026</span>
+          <div class="bg-white px-2.5 py-1 rounded-xl bujo-box text-center">
+            <span id="badgeMonthYear" class="font-mono-num font-bold text-xs text-stone-800 leading-none">OCT 2026</span>
           </div>
 
-          <div class="bg-white px-2.5 py-0.5 rounded-lg bujo-box-border text-center">
-            <span class="text-[8px] font-bold uppercase tracking-wider block text-stone-400">Habit</span>
-            <span id="printableHabitName" class="font-handwriting font-bold text-lg text-purple-900 leading-none truncate max-w-[90px] block">Running</span>
+          <!-- Quick Toggle between 7-Day Calendar Grid & Multi-Habit Row View -->
+          <div class="flex bg-stone-200 p-0.5 rounded-lg border border-stone-400">
+            <button id="viewCalBtn" onclick="switchView('calendar')" class="px-2 py-0.5 rounded text-[10px] font-bold transition bg-white text-stone-900 shadow-xs">
+              Grid
+            </button>
+            <button id="viewMatrixBtn" onclick="switchView('matrix')" class="px-2 py-0.5 rounded text-[10px] font-bold transition text-stone-600 hover:text-stone-900">
+              Rows
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Compact 31 x 12 Table Container: Fits standard phone widths (360px-414px) natively -->
-      <div class="mt-3 w-full overflow-x-auto no-scrollbar">
-        <div class="w-full min-w-[305px] max-w-full mx-auto border-[1.5px] border-stone-800 rounded-lg overflow-hidden bg-white shadow-xs">
-          
-          <!-- Month Headers: D\M then J F M A M J J A S O N D -->
-          <div class="habit-grid bg-[#f4ede1] border-b-[1.5px] border-stone-800 text-center font-bold text-[10px] sm:text-xs text-stone-800 py-1 font-mono-num">
-            <div class="text-[9px] text-stone-500 self-center leading-none">D\M</div>
-            <div>J</div>
-            <div>F</div>
-            <div>M</div>
-            <div>A</div>
-            <div>M</div>
-            <div>J</div>
-            <div>J</div>
-            <div>A</div>
-            <div>S</div>
-            <div>O</div>
-            <div>N</div>
-            <div>D</div>
-          </div>
+      <!-- VIEW 1: Standard 7-Day Calendar (Larger, comfortable touch squares) -->
+      <div id="calendarViewContainer" class="mt-2.5">
+        <!-- Weekday Headers -->
+        <div class="grid grid-cols-7 gap-1 text-center font-bold text-[10px] font-mono-num text-stone-600 mb-1">
+          <div class="text-rose-700">SUN</div>
+          <div>MON</div>
+          <div>TUE</div>
+          <div>WED</div>
+          <div>THU</div>
+          <div>FRI</div>
+          <div class="text-stone-700">SAT</div>
+        </div>
 
-          <!-- Dynamic 31 Days Table Body -->
-          <div id="gridBody" class="divide-y divide-stone-800/80">
-            <!-- Injected by JavaScript -->
-          </div>
-
+        <!-- 7x5 or 7x6 Calendar Grid -->
+        <div id="calendarDayGrid" class="grid grid-cols-7 gap-1.5">
+          <!-- Dynamically populated with ~48px comfortable cells -->
         </div>
       </div>
 
-      <!-- Quick Legend & Action Footer -->
-      <div class="mt-3 pt-2.5 border-t border-stone-200">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-stone-500">Legend / Intensity</span>
-          <button onclick="openPaletteModal()" class="text-[11px] font-semibold text-stone-700 underline">Change Palette</button>
+      <!-- VIEW 2: Multi-Habit Monthly Row Matrix (Alternative View for all habits) -->
+      <div id="matrixViewContainer" class="mt-2.5 hidden">
+        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1.5">Selected Month Days (1 to 31):</p>
+        <div id="matrixRowsContainer" class="space-y-2 overflow-x-auto no-scrollbar pb-1">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Legend & Palette Scale -->
+      <div class="mt-3.5 pt-2.5 border-t border-stone-300">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Tap to cycle intensity:</span>
+          <button onclick="openPaletteModal()" class="text-[10px] font-semibold text-purple-900 underline">Change Palette</button>
         </div>
 
-        <!-- Horizontal scrollable or wrapped legend chips -->
-        <div id="legendContainer" class="flex flex-wrap items-center gap-1.5">
-          <!-- Injected dynamically -->
+        <div id="legendSwatches" class="flex flex-wrap items-center gap-1.5">
+          <!-- Dynamic legend blocks -->
         </div>
+      </div>
 
-        <div class="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-stone-200 text-xs">
-          <button onclick="logTodayPrompt()" class="flex-1 py-1.5 bg-stone-900 hover:bg-stone-800 text-white rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1 active:scale-95 transition">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Mark Today
-          </button>
-          <button onclick="exportJournalImage()" class="flex-1 py-1.5 bg-white bujo-box-border text-stone-800 rounded-lg font-bold text-xs flex items-center justify-center gap-1 active:scale-95 transition">
-            <i data-lucide="camera" class="w-3.5 h-3.5"></i> Save Image
-          </button>
-        </div>
+      <!-- Bottom Quick Actions -->
+      <div class="mt-3.5 pt-2.5 border-t border-stone-200 flex gap-2">
+        <button onclick="logTodayDirect()" class="flex-1 py-2 bg-stone-900 hover:bg-stone-800 text-white bujo-box bujo-button-shadow rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition">
+          <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Mark Today
+        </button>
+        <button onclick="exportMonthlyCard()" class="flex-1 py-2 bg-white bujo-box bujo-button-shadow text-stone-800 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition">
+          <i data-lucide="camera" class="w-3.5 h-3.5"></i> Save Card
+        </button>
       </div>
 
     </div>
+
   </main>
 
-  <!-- MODAL: Detailed Day Entry -->
+  <!-- MODAL: Detailed Day Cell Modal -->
   <div id="cellModal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white bujo-box-border rounded-2xl w-full max-w-xs p-4 shadow-2xl modal-animate text-stone-800">
+    <div class="bg-white bujo-box rounded-2xl w-full max-w-xs p-4 shadow-2xl modal-pop text-stone-800">
       <div class="flex justify-between items-start border-b border-stone-200 pb-2 mb-2.5">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block" id="modalHabitSub">Habit</span>
-          <h3 class="text-xl font-handwriting font-bold text-stone-900" id="modalDateTitle">March 15, 2026</h3>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block" id="modalHabitName">Habit</span>
+          <h3 class="text-xl font-handwriting font-bold text-stone-900" id="modalDateFormatted">October 1, 2026</h3>
         </div>
         <button onclick="closeModal('cellModal')" class="p-1 rounded text-stone-400 hover:text-stone-700">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div id="modalIntensityOptions" class="grid grid-cols-1 gap-1 mb-3">
-        <!-- Dynamically injected -->
+      <!-- Quick Intensity Options -->
+      <div id="modalLevelsList" class="grid grid-cols-1 gap-1.5 mb-3">
+        <!-- Injected -->
       </div>
 
-      <button onclick="clearCurrentCell()" class="w-full py-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200 transition">
-        Clear Entry
-      </button>
+      <!-- Custom Notes or Exact Minutes -->
+      <div class="mb-3">
+        <label class="block text-[9px] font-bold uppercase tracking-wider text-stone-500 mb-1">Daily Note (optional)</label>
+        <input type="text" id="modalNoteInput" placeholder="e.g., 5km run at the park" class="w-full px-2.5 py-1.5 border border-stone-300 rounded-lg text-xs bg-stone-50 focus:outline-none">
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="clearActiveCell()" class="flex-1 py-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200 transition">
+          Clear
+        </button>
+        <button onclick="saveActiveCellNote()" class="flex-1 py-1.5 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-bold transition">
+          Done
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL: Color Palettes -->
+  <!-- MODAL: Month & Year Quick Jump -->
+  <div id="monthPickerModal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white bujo-box rounded-2xl w-full max-w-xs p-4 shadow-2xl modal-pop text-stone-800">
+      <div class="flex justify-between items-center border-b border-stone-200 pb-2 mb-3">
+        <h3 class="text-xl font-handwriting font-bold">Select Month & Year</h3>
+        <button onclick="closeModal('monthPickerModal')" class="p-1 text-stone-400 hover:text-stone-700">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-center gap-3 mb-3">
+        <button onclick="adjustPickerYear(-1)" class="p-1.5 rounded-lg border border-stone-300 hover:bg-stone-100">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <span id="pickerYearDisplay" class="font-mono-num font-bold text-base">2026</span>
+        <button onclick="adjustPickerYear(1)" class="p-1.5 rounded-lg border border-stone-300 hover:bg-stone-100">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-1.5" id="monthPickerGrid">
+        <!-- 12 Months injected -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Color Themes -->
   <div id="paletteModal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white bujo-box-border rounded-2xl w-full max-w-sm p-4 shadow-2xl modal-animate text-stone-800">
+    <div class="bg-white bujo-box rounded-2xl w-full max-w-sm p-4 shadow-2xl modal-pop text-stone-800">
       <div class="flex justify-between items-center border-b border-stone-200 pb-2 mb-3">
         <h3 class="text-2xl font-handwriting font-bold">Color Palettes</h3>
         <button onclick="closeModal('paletteModal')" class="p-1 text-stone-400 hover:text-stone-700">
@@ -287,7 +347,7 @@
         </button>
       </div>
 
-      <div id="paletteList" class="flex flex-col gap-2 max-h-72 overflow-y-auto no-scrollbar pr-1">
+      <div id="paletteListContainer" class="flex flex-col gap-2 max-h-72 overflow-y-auto no-scrollbar pr-1">
         <!-- Injected -->
       </div>
     </div>
@@ -295,9 +355,9 @@
 
   <!-- MODAL: Add New Habit -->
   <div id="newHabitModal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white bujo-box-border rounded-2xl w-full max-w-sm p-4 shadow-2xl modal-animate text-stone-800">
+    <div class="bg-white bujo-box rounded-2xl w-full max-w-sm p-4 shadow-2xl modal-pop text-stone-800">
       <div class="flex justify-between items-center border-b border-stone-200 pb-2 mb-3">
-        <h3 class="text-2xl font-handwriting font-bold">New Habit</h3>
+        <h3 class="text-2xl font-handwriting font-bold">Add Habit</h3>
         <button onclick="closeModal('newHabitModal')" class="p-1 text-stone-400 hover:text-stone-700">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
@@ -306,508 +366,242 @@
       <div class="space-y-3">
         <div>
           <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Habit Name</label>
-          <input type="text" id="newHabitInput" placeholder="e.g. Reading, Gym, Meditate" class="w-full px-3 py-2 border-2 border-stone-800 rounded-lg text-sm font-semibold focus:outline-none bg-stone-50">
+          <input type="text" id="newHabitNameInput" placeholder="e.g. Reading, Gym, Meditate" class="w-full px-3 py-2 border-2 border-stone-800 rounded-xl text-sm font-semibold focus:outline-none bg-stone-50">
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Color Palette</label>
-          <select id="newHabitPaletteSelect" class="w-full px-3 py-2 border-2 border-stone-800 rounded-lg text-sm font-semibold bg-stone-50 focus:outline-none">
-            <!-- Palette choices -->
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Theme Palette</label>
+          <select id="newHabitThemeSelect" class="w-full px-3 py-2 border-2 border-stone-800 rounded-xl text-sm font-semibold bg-stone-50 focus:outline-none">
+            <!-- Options -->
           </select>
         </div>
 
         <div class="pt-2 flex gap-2">
-          <button onclick="closeModal('newHabitModal')" class="flex-1 py-1.5 bg-stone-100 font-bold text-xs rounded-lg border border-stone-300 text-stone-700">Cancel</button>
-          <button onclick="saveNewHabit()" class="flex-1 py-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs rounded-lg border-2 border-stone-900 shadow">Create</button>
+          <button onclick="closeModal('newHabitModal')" class="flex-1 py-2 bg-stone-100 font-bold text-xs rounded-xl border border-stone-300 text-stone-700">Cancel</button>
+          <button onclick="createNewHabit()" class="flex-1 py-2 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs rounded-xl bujo-box bujo-button-shadow">Create</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: Data, SQL Export & Backup -->
+  <!-- MODAL: Data Storage & SQLite Export -->
   <div id="settingsModal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white bujo-box-border rounded-2xl w-full max-w-sm p-4 shadow-2xl modal-animate text-stone-800">
+    <div class="bg-white bujo-box rounded-2xl w-full max-w-sm p-4 shadow-2xl modal-pop text-stone-800">
       <div class="flex justify-between items-center border-b border-stone-200 pb-2 mb-3">
         <div>
-          <h3 class="text-2xl font-handwriting font-bold leading-none">Data & Storage</h3>
-          <p class="text-[10px] text-stone-500">Auto-saved in browser storage</p>
+          <h3 class="text-2xl font-handwriting font-bold leading-none">Storage & Backup</h3>
+          <p class="text-[10px] text-stone-500">Auto-saved in iOS Safari Storage</p>
         </div>
         <button onclick="closeModal('settingsModal')" class="p-1 text-stone-400 hover:text-stone-700">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
-        <!-- SQL / SQLite File Export -->
-        <div class="bg-stone-50 border border-stone-200 rounded-xl p-2.5">
-          <div class="flex items-center gap-1.5 font-bold text-stone-900 mb-1">
-            <i data-lucide="file-code" class="w-4 h-4 text-purple-700"></i> SQLite / SQL Export (.sql)
+      <div class="space-y-3 text-xs">
+        <!-- SQLite Script Backup -->
+        <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-2.5">
+          <div class="flex items-center gap-1.5 font-bold text-purple-950 mb-1">
+            <i data-lucide="file-code" class="w-4 h-4 text-purple-800"></i> SQLite / SQL Export (.sql)
           </div>
-          <p class="text-[11px] text-stone-600 mb-2 leading-tight">
-            Download a standard `.sql` script with `CREATE TABLE` and `INSERT` statements to easily inspect, archive, or run in SQLite.
+          <p class="text-[11px] text-purple-900/80 mb-2 leading-tight">
+            Creates a single clean SQL file with `CREATE TABLE` and `INSERT INTO` queries ready for SQLite.
           </p>
-          <button onclick="exportDataSQL()" class="w-full py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-300 font-bold rounded-lg flex items-center justify-center gap-1.5 transition">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download habits_backup.sql
+          <button onclick="exportSqlBackup()" class="w-full py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export habits_backup.sql
           </button>
         </div>
 
         <!-- JSON Backup & Restore -->
-        <div>
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">JSON Backup & Restore</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="exportDataJSON()" class="py-1.5 px-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 font-bold rounded-lg flex items-center justify-center gap-1 text-[11px]">
-              <i data-lucide="file-json" class="w-3 h-3"></i> Export JSON
-            </button>
-            <label class="py-1.5 px-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 font-bold rounded-lg flex items-center justify-center gap-1 text-[11px] cursor-pointer text-center">
-              <i data-lucide="upload" class="w-3 h-3"></i> Import File
-              <input type="file" id="importFileInput" accept=".json,.sql" class="hidden" onchange="importDataFile(event)">
-            </label>
-          </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="exportJsonBackup()" class="py-2 px-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 font-bold rounded-xl flex items-center justify-center gap-1 text-[11px]">
+            <i data-lucide="file-json" class="w-3.5 h-3.5"></i> Export JSON
+          </button>
+          <label class="py-2 px-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 font-bold rounded-xl flex items-center justify-center gap-1 text-[11px] cursor-pointer text-center">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Import File
+            <input type="file" id="importInput" accept=".json,.sql" class="hidden" onchange="handleFileImport(event)">
+          </label>
         </div>
 
-        <!-- CSV Export for Spreadsheets -->
-        <button onclick="exportDataCSV()" class="w-full py-1.5 bg-stone-100 hover:bg-stone-200 border border-stone-300 font-bold rounded-lg flex items-center justify-center gap-1.5 text-[11px]">
-          <i data-lucide="table" class="w-3.5 h-3.5"></i> Export Active Habit as CSV
-        </button>
-
-        <!-- Danger zone -->
-        <div class="border-t border-stone-200 pt-2.5">
-          <div class="flex justify-between items-center">
-            <span class="text-stone-600 font-semibold text-[11px]">Delete current habit:</span>
-            <button onclick="deleteCurrentHabit()" class="px-2 py-0.5 text-rose-600 hover:bg-rose-50 font-bold rounded border border-rose-300 text-[11px]">Delete</button>
-          </div>
+        <!-- Delete active habit -->
+        <div class="border-t border-stone-200 pt-2 flex justify-between items-center">
+          <span class="text-stone-600 font-semibold text-[11px]">Delete current habit:</span>
+          <button onclick="deleteActiveHabit()" class="px-2 py-1 text-rose-600 hover:bg-rose-50 font-bold rounded border border-rose-300 text-[11px]">Delete</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Toast notification -->
-  <div id="toastMessage" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-lg pointer-events-none opacity-0 transition-opacity duration-200 flex items-center gap-1.5">
+  <!-- Toast Notification -->
+  <div id="toastNotification" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-lg pointer-events-none opacity-0 transition-opacity duration-200 flex items-center gap-1.5">
     <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
     <span id="toastText">Saved</span>
   </div>
 
   <script>
-    // Palettes configured for bullet-journal aesthetic
+    // Bullet-Journal Inspired Color Palettes with Minutes Mapping
     const PALETTES = {
       mauve: {
         id: 'mauve',
         name: 'Soft Mauve (Image Match)',
         levels: [
-          { level: 0, label: 'None', color: '#ffffff', text: '#2d2a26', border: '#332f2b' },
-          { level: 1, label: '10 min', color: '#f3c5dc', text: '#501e38', border: '#d997b9' },
-          { level: 2, label: '20 min', color: '#e8a5c9', text: '#481532', border: '#cf73a5' },
-          { level: 3, label: '30 min', color: '#db7fae', text: '#ffffff', border: '#bf548b' },
-          { level: 4, label: '40 min', color: '#cf5a98', text: '#ffffff', border: '#a83c76' },
-          { level: 5, label: '50 min', color: '#b84288', text: '#ffffff', border: '#8b2762' },
-          { level: 6, label: '60 min', color: '#a02e77', text: '#ffffff', border: '#701950' },
-          { level: 7, label: '60+ min', color: '#881b67', text: '#ffffff', border: '#570e40' }
+          { level: 0, label: 'None', minutes: 0, color: '#ffffff', text: '#2d2824', border: '#312b25' },
+          { level: 1, label: '10 min', minutes: 10, color: '#f5ccdf', text: '#501e38', border: '#d894b7' },
+          { level: 2, label: '20 min', minutes: 20, color: '#e8a5c9', text: '#481532', border: '#cf73a5' },
+          { level: 3, label: '30 min', minutes: 30, color: '#db7fae', text: '#ffffff', border: '#bf548b' },
+          { level: 4, label: '45 min', minutes: 45, color: '#cf5a98', text: '#ffffff', border: '#a83c76' },
+          { level: 5, label: '60+ min', minutes: 60, color: '#881b67', text: '#ffffff', border: '#570e40' }
         ]
       },
       sage: {
         id: 'sage',
         name: 'Sage Garden',
         levels: [
-          { level: 0, label: 'None', color: '#ffffff', text: '#2d2a26', border: '#332f2b' },
-          { level: 1, label: '15 min', color: '#e5eee6', text: '#193322', border: '#c3dac6' },
-          { level: 2, label: '30 min', color: '#c3dac6', text: '#193322', border: '#9bbfa0' },
-          { level: 3, label: '45 min', color: '#9bbfa0', text: '#ffffff', border: '#6c9d73' },
-          { level: 4, label: '60 min', color: '#6c9d73', text: '#ffffff', border: '#477a4e' },
-          { level: 5, label: '90 min', color: '#477a4e', text: '#ffffff', border: '#2c5932' },
-          { level: 6, label: '2+ hrs', color: '#2c5932', text: '#ffffff', border: '#17361c' }
+          { level: 0, label: 'None', minutes: 0, color: '#ffffff', text: '#2d2824', border: '#312b25' },
+          { level: 1, label: '15 min', minutes: 15, color: '#e5eee6', text: '#193322', border: '#c3dac6' },
+          { level: 2, label: '30 min', minutes: 30, color: '#c3dac6', text: '#193322', border: '#9bbfa0' },
+          { level: 3, label: '45 min', minutes: 45, color: '#9bbfa0', text: '#ffffff', border: '#6c9d73' },
+          { level: 4, label: '60 min', minutes: 60, color: '#6c9d73', text: '#ffffff', border: '#477a4e' },
+          { level: 5, label: '90+ min', minutes: 90, color: '#2c5932', text: '#ffffff', border: '#17361c' }
         ]
       },
       ocean: {
         id: 'ocean',
         name: 'Nordic Ocean',
         levels: [
-          { level: 0, label: 'None', color: '#ffffff', text: '#2d2a26', border: '#332f2b' },
-          { level: 1, label: 'Low', color: '#d8ebf7', text: '#0e314d', border: '#b0d5ed' },
-          { level: 2, label: 'Moderate', color: '#a8d2ed', text: '#0e314d', border: '#70add6' },
-          { level: 3, label: 'Regular', color: '#6ca8d6', text: '#ffffff', border: '#3f82b7' },
-          { level: 4, label: 'Strong', color: '#387fb8', text: '#ffffff', border: '#1f5f94' },
-          { level: 5, label: 'Intense', color: '#1a598d', text: '#ffffff', border: '#0f3c63' },
-          { level: 6, label: 'Max', color: '#0d375c', text: '#ffffff', border: '#072139' }
+          { level: 0, label: 'None', minutes: 0, color: '#ffffff', text: '#2d2824', border: '#312b25' },
+          { level: 1, label: '10 min', minutes: 10, color: '#dbebf7', text: '#0e314d', border: '#b0d5ed' },
+          { level: 2, label: '20 min', minutes: 20, color: '#a8d2ed', text: '#0e314d', border: '#70add6' },
+          { level: 3, label: '30 min', minutes: 30, color: '#6ca8d6', text: '#ffffff', border: '#3f82b7' },
+          { level: 4, label: '45 min', minutes: 45, color: '#387fb8', text: '#ffffff', border: '#1f5f94' },
+          { level: 5, label: '60+ min', minutes: 60, color: '#0d375c', text: '#ffffff', border: '#072139' }
         ]
       },
       sunset: {
         id: 'sunset',
         name: 'Warm Terracotta',
         levels: [
-          { level: 0, label: 'None', color: '#ffffff', text: '#2d2a26', border: '#332f2b' },
-          { level: 1, label: '10 min', color: '#fbe6d8', text: '#4d2008', border: '#f4c7ab' },
-          { level: 2, label: '20 min', color: '#f5c1a0', text: '#4d2008', border: '#e89c6f' },
-          { level: 3, label: '30 min', color: '#e58e5c', text: '#ffffff', border: '#ce672f' },
-          { level: 4, label: '45 min', color: '#d1602c', text: '#ffffff', border: '#b04313' },
-          { level: 5, label: '60 min', color: '#b54316', text: '#ffffff', border: '#8b2b07' },
-          { level: 6, label: '90+ min', color: '#882907', text: '#ffffff', border: '#5b1600' }
+          { level: 0, label: 'None', minutes: 0, color: '#ffffff', text: '#2d2824', border: '#312b25' },
+          { level: 1, label: '15 min', minutes: 15, color: '#fbe7da', text: '#4d2008', border: '#f4c7ab' },
+          { level: 2, label: '30 min', minutes: 30, color: '#f5c1a0', text: '#4d2008', border: '#e89c6f' },
+          { level: 3, label: '45 min', minutes: 45, color: '#e58e5c', text: '#ffffff', border: '#ce672f' },
+          { level: 4, label: '60 min', minutes: 60, color: '#b54316', text: '#ffffff', border: '#8b2b07' },
+          { level: 5, label: '90+ min', minutes: 90, color: '#882907', text: '#ffffff', border: '#5b1600' }
         ]
       },
       monochrome: {
         id: 'monochrome',
-        name: 'Ink & Pencil',
+        name: 'Minimal Charcoal',
         levels: [
-          { level: 0, label: 'None', color: '#ffffff', text: '#2d2a26', border: '#332f2b' },
-          { level: 1, label: '15 min', color: '#e8e8e8', text: '#222222', border: '#cccccc' },
-          { level: 2, label: '30 min', color: '#c4c4c4', text: '#222222', border: '#999999' },
-          { level: 3, label: '45 min', color: '#919191', text: '#ffffff', border: '#666666' },
-          { level: 4, label: '60 min', color: '#575757', text: '#ffffff', border: '#333333' },
-          { level: 5, label: '90+ min', color: '#1f1f1f', text: '#ffffff', border: '#000000' }
+          { level: 0, label: 'None', minutes: 0, color: '#ffffff', text: '#2d2824', border: '#312b25' },
+          { level: 1, label: '15 min', minutes: 15, color: '#ececec', text: '#222222', border: '#cccccc' },
+          { level: 2, label: '30 min', minutes: 30, color: '#c5c5c5', text: '#222222', border: '#999999' },
+          { level: 3, label: '45 min', minutes: 45, color: '#8a8a8a', text: '#ffffff', border: '#666666' },
+          { level: 4, label: '60 min', minutes: 60, color: '#525252', text: '#ffffff', border: '#333333' },
+          { level: 5, label: '90+ min', minutes: 90, color: '#1a1a1a', text: '#ffffff', border: '#000000' }
         ]
       }
     };
-
-    let state = {
-      currentYear: new Date().getFullYear(),
-      activeHabitId: 'habit_running',
-      habits: {
-        habit_running: {
-          id: 'habit_running',
-          name: 'Running',
-          paletteId: 'mauve',
-          logs: {}
-        }
-      }
-    };
-
-    function loadSavedState() {
-      try {
-        const stored = localStorage.getItem('bujo_habittracker_data');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.habits) {
-            state = parsed;
-          }
-        } else {
-          // Sample entry for today to show initial aesthetic
-          const now = new Date();
-          state.habits.habit_running.logs[`${state.currentYear}-${now.getMonth()}-${now.getDate()}`] = 2;
-          saveState();
-        }
-      } catch (err) {
-        console.error('LocalStorage error', err);
-      }
-    }
-
-    function saveState() {
-      try {
-        localStorage.setItem('bujo_habittracker_data', JSON.stringify(state));
-      } catch (err) {
-        console.warn('LocalStorage save failed', err);
-      }
-      updateStats();
-    }
-
-    function getDaysInMonth(year, monthIndex) {
-      return new Date(year, monthIndex + 1, 0).getDate();
-    }
 
     const MONTH_NAMES = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    function renderGrid() {
-      const container = document.getElementById('gridBody');
-      if (!container) return;
-      container.innerHTML = '';
-
-      const habit = state.habits[state.activeHabitId];
-      if (!habit) return;
-      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
-      const year = state.currentYear;
-      const today = new Date();
-
-      for (let day = 1; day <= 31; day++) {
-        const row = document.createElement('div');
-        row.className = 'habit-grid items-center border-b border-stone-800/80 last:border-b-0';
-
-        // Day Number Column (1 to 31)
-        const dayLabel = document.createElement('div');
-        dayLabel.className = 'font-mono-num font-bold text-[10px] text-stone-700 text-center py-0.5 border-r border-stone-800 bg-[#fbf9f5] self-stretch flex items-center justify-center';
-        dayLabel.textContent = day;
-        row.appendChild(dayLabel);
-
-        // 12 Months Cells
-        for (let m = 0; m < 12; m++) {
-          const maxDays = getDaysInMonth(year, m);
-          const cell = document.createElement('div');
-          cell.className = 'grid-cell flex items-center justify-center border-r border-stone-800/80 last:border-r-0 cursor-pointer relative';
-
-          if (day > maxDays) {
-            // Disabled / Non-existent calendar day
-            cell.className += ' bg-stone-200/50 cursor-not-allowed';
-            cell.innerHTML = '<span class="text-stone-300 text-[8px] select-none">/</span>';
-          } else {
-            // Valid Day
-            const key = `${year}-${m}-${day}`;
-            const levelVal = habit.logs[key] || 0;
-            const levelConfig = palette.levels[levelVal] || palette.levels[0];
-
-            cell.style.backgroundColor = levelConfig.color;
-            cell.setAttribute('data-key', key);
-
-            // Highlight Today
-            if (today.getFullYear() === year && today.getMonth() === m && today.getDate() === day) {
-              const dot = document.createElement('div');
-              dot.className = 'w-1 h-1 bg-stone-900 rounded-full absolute bottom-0.5 right-0.5';
-              cell.appendChild(dot);
-            }
-
-            // Quick Touch handling
-            let pressTimer = null;
-            let didLongPress = false;
-
-            cell.addEventListener('touchstart', (e) => {
-              didLongPress = false;
-              pressTimer = setTimeout(() => {
-                didLongPress = true;
-                openCellModal(year, m, day);
-              }, 400);
-            }, { passive: true });
-
-            cell.addEventListener('touchend', (e) => {
-              clearTimeout(pressTimer);
-              if (!didLongPress) {
-                cycleCellLevel(key);
-              }
-            });
-
-            cell.addEventListener('touchmove', () => {
-              clearTimeout(pressTimer);
-            });
-
-            // Desktop click
-            cell.addEventListener('click', (e) => {
-              if (!('ontouchstart' in window)) {
-                cycleCellLevel(key);
-              }
-            });
-
-            cell.addEventListener('contextmenu', (e) => {
-              e.preventDefault();
-              openCellModal(year, m, day);
-            });
+    // Current State
+    let state = {
+      viewMode: 'calendar', // 'calendar' or 'matrix'
+      viewYear: 2026,
+      viewMonth: 9, // 0-indexed (9 = October)
+      activeHabitId: 'habit_running',
+      habits: {
+        habit_running: {
+          id: 'habit_running',
+          name: 'Running',
+          paletteId: 'mauve',
+          logs: {
+            '2026-9-1': { level: 2, note: 'Morning park run' },
+            '2026-9-2': { level: 4, note: 'Interval training' },
+            '2026-9-3': { level: 1, note: 'Easy jog' }
           }
-
-          row.appendChild(cell);
+        },
+        habit_reading: {
+          id: 'habit_reading',
+          name: 'Reading',
+          paletteId: 'sage',
+          logs: {
+            '2026-9-1': { level: 3, note: 'Atomic Habits' }
+          }
         }
+      }
+    };
 
-        container.appendChild(row);
+    let pickerYearTemp = 2026;
+
+    function loadSavedState() {
+      try {
+        const stored = localStorage.getItem('monthly_habits_journal');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.habits) {
+            state = parsed;
+          }
+        } else {
+          saveState();
+        }
+      } catch (err) {
+        console.warn('Storage read warning', err);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('monthly_habits_journal', JSON.stringify(state));
+      } catch (err) {
+        console.warn('Storage write failed', err);
+      }
+      updateStats();
+    }
+
+    function renderMainView() {
+      updateHeaderAndLabels();
+
+      if (state.viewMode === 'calendar') {
+        document.getElementById('calendarViewContainer').classList.remove('hidden');
+        document.getElementById('matrixViewContainer').classList.add('hidden');
+        renderCalendarGrid();
+      } else {
+        document.getElementById('calendarViewContainer').classList.add('hidden');
+        document.getElementById('matrixViewContainer').classList.remove('hidden');
+        renderMatrixView();
       }
 
       renderLegend();
       updateStats();
-      updateHeaderUI();
     }
 
-    function cycleCellLevel(dateKey) {
-      const habit = state.habits[state.activeHabitId];
-      if (!habit) return;
-      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
-      const maxLevel = palette.levels.length - 1;
-
-      const current = habit.logs[dateKey] || 0;
-      const next = current >= maxLevel ? 0 : current + 1;
-
-      if (next === 0) {
-        delete habit.logs[dateKey];
-      } else {
-        habit.logs[dateKey] = next;
-      }
-
-      saveState();
-      renderGrid();
-    }
-
-    let activeModalCellKey = null;
-
-    function openCellModal(year, month, day) {
-      activeModalCellKey = `${year}-${month}-${day}`;
-      const habit = state.habits[state.activeHabitId];
-      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
-      const currentLevel = habit.logs[activeModalCellKey] || 0;
-
-      document.getElementById('modalHabitSub').textContent = habit.name;
-      document.getElementById('modalDateTitle').textContent = `${MONTH_NAMES[month]} ${day}, ${year}`;
-
-      const optionsContainer = document.getElementById('modalIntensityOptions');
-      optionsContainer.innerHTML = '';
-
-      palette.levels.forEach((lvl) => {
-        const btn = document.createElement('button');
-        const isSelected = lvl.level === currentLevel;
-        btn.className = `flex items-center justify-between px-3 py-1.5 rounded-lg border-2 text-xs font-bold transition ${
-          isSelected ? 'border-stone-900 ring-2 ring-stone-900/30' : 'border-stone-200 hover:border-stone-400'
-        }`;
-        
-        btn.innerHTML = `
-          <div class="flex items-center gap-2">
-            <span class="w-4 h-4 rounded border border-stone-800" style="background-color: ${lvl.color}"></span>
-            <span class="text-stone-800">${lvl.label}</span>
-          </div>
-          ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-stone-900"></i>' : ''}
-        `;
-
-        btn.onclick = () => {
-          if (lvl.level === 0) {
-            delete habit.logs[activeModalCellKey];
-          } else {
-            habit.logs[activeModalCellKey] = lvl.level;
-          }
-          saveState();
-          renderGrid();
-          closeModal('cellModal');
-          showToast(`Saved for ${MONTH_NAMES[month]} ${day}`);
-        };
-
-        optionsContainer.appendChild(btn);
-      });
-
-      lucide.createIcons();
-      document.getElementById('cellModal').classList.remove('hidden');
-    }
-
-    function clearCurrentCell() {
-      if (!activeModalCellKey) return;
-      const habit = state.habits[state.activeHabitId];
-      if (habit) {
-        delete habit.logs[activeModalCellKey];
-        saveState();
-        renderGrid();
-      }
-      closeModal('cellModal');
-    }
-
-    function renderLegend() {
-      const container = document.getElementById('legendContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      const habit = state.habits[state.activeHabitId];
-      if (!habit) return;
-      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
-
-      palette.levels.forEach((lvl) => {
-        const item = document.createElement('div');
-        item.className = 'flex items-center gap-1 text-[11px] font-semibold text-stone-700 bg-white/80 px-1.5 py-0.5 rounded border border-stone-300';
-
-        const colorBox = document.createElement('div');
-        colorBox.className = 'w-3 h-3 rounded-xs border border-stone-800 shrink-0';
-        colorBox.style.backgroundColor = lvl.color;
-
-        const label = document.createElement('span');
-        label.className = 'tracking-tight font-mono-num text-[10px]';
-        label.textContent = lvl.label;
-
-        item.appendChild(colorBox);
-        item.appendChild(label);
-        container.appendChild(item);
-      });
-    }
-
-    function openPaletteModal() {
-      const habit = state.habits[state.activeHabitId];
-      const list = document.getElementById('paletteList');
-      list.innerHTML = '';
-
-      Object.values(PALETTES).forEach(p => {
-        const card = document.createElement('div');
-        const isActive = habit && habit.paletteId === p.id;
-        card.className = `p-2.5 rounded-xl border-2 cursor-pointer transition flex flex-col gap-1.5 ${
-          isActive ? 'border-stone-900 bg-stone-50' : 'border-stone-200 hover:border-stone-400'
-        }`;
-
-        let swatchesHtml = '<div class="flex items-center gap-1">';
-        p.levels.forEach(lvl => {
-          swatchesHtml += `<span class="w-4 h-4 rounded border border-stone-800" style="background-color: ${lvl.color}"></span>`;
-        });
-        swatchesHtml += '</div>';
-
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-xs text-stone-900">${p.name}</span>
-            ${isActive ? '<span class="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">Active</span>' : ''}
-          </div>
-          ${swatchesHtml}
-        `;
-
-        card.onclick = () => {
-          if (habit) {
-            habit.paletteId = p.id;
-            saveState();
-            renderGrid();
-            closeModal('paletteModal');
-            showToast(`Theme changed to ${p.name}`);
-          }
-        };
-
-        list.appendChild(card);
-      });
-
-      document.getElementById('paletteModal').classList.remove('hidden');
-    }
-
-    function updateStats() {
-      const habit = state.habits[state.activeHabitId];
-      if (!habit) return;
-      const year = state.currentYear;
+    function updateHeaderAndLabels() {
+      const habit = state.habits[state.activeHabitId] || Object.values(state.habits)[0];
+      const monthStr = MONTH_NAMES[state.viewMonth];
       
-      const loggedDates = Object.keys(habit.logs).filter(k => k.startsWith(`${year}-`));
-      const totalLogged = loggedDates.length;
+      document.getElementById('currentHabitLabel').textContent = habit.name;
+      document.getElementById('bannerHabitTitle').textContent = habit.name;
+      document.getElementById('currentMonthYearHeading').textContent = `${monthStr} ${state.viewYear}`;
+      document.getElementById('badgeMonthYear').textContent = `${monthStr.substring(0,3).toUpperCase()} ${state.viewYear}`;
 
-      document.getElementById('statTotalDays').textContent = totalLogged;
-
-      const now = new Date();
-      const startOfYear = new Date(year, 0, 1);
-      const isCurrentYear = now.getFullYear() === year;
-      const totalDaysToCompare = isCurrentYear 
-        ? Math.max(1, Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1)
-        : (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 366 : 365);
-
-      const percent = Math.min(100, Math.round((totalLogged / totalDaysToCompare) * 100));
-      document.getElementById('statCompletion').textContent = `${percent}%`;
-
-      // Streak
-      let streak = 0;
-      let checkDate = new Date();
-      if (checkDate.getFullYear() !== year) {
-        checkDate = new Date(year, 11, 31);
+      // View toggle buttons styling
+      const calBtn = document.getElementById('viewCalBtn');
+      const matBtn = document.getElementById('viewMatrixBtn');
+      if (state.viewMode === 'calendar') {
+        calBtn.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-white text-stone-900 shadow-xs';
+        matBtn.className = 'px-2 py-0.5 rounded text-[10px] font-bold text-stone-600 hover:text-stone-900';
+      } else {
+        calBtn.className = 'px-2 py-0.5 rounded text-[10px] font-bold text-stone-600 hover:text-stone-900';
+        matBtn.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-white text-stone-900 shadow-xs';
       }
 
-      for (let i = 0; i < 365; i++) {
-        const y = checkDate.getFullYear();
-        const m = checkDate.getMonth();
-        const d = checkDate.getDate();
-        const key = `${y}-${m}-${d}`;
-
-        if (habit.logs[key] && habit.logs[key] > 0) {
-          streak++;
-          checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-          if (i === 0 && isCurrentYear && checkDate.getDate() === now.getDate()) {
-            checkDate.setDate(checkDate.getDate() - 1);
-            continue;
-          }
-          break;
-        }
-      }
-
-      document.getElementById('statStreak').innerHTML = `${streak} <span class="text-[10px] font-normal">days</span>`;
-    }
-
-    function updateHeaderUI() {
-      const habit = state.habits[state.activeHabitId];
-      if (!habit) return;
-
-      document.getElementById('currentHabitName').textContent = habit.name;
-      document.getElementById('printableHabitName').textContent = habit.name;
-      document.getElementById('currentYearDisplay').textContent = state.currentYear;
-      document.getElementById('printableYear').textContent = state.currentYear;
-
-      const dropdownContainer = document.getElementById('habitListOptions');
-      dropdownContainer.innerHTML = '';
-
+      // Populate Habits Dropdown
+      const dropdown = document.getElementById('habitListContainer');
+      dropdown.innerHTML = '';
       Object.values(state.habits).forEach(h => {
         const item = document.createElement('button');
         const isActive = h.id === state.activeHabitId;
@@ -816,18 +610,405 @@
         }`;
         item.innerHTML = `
           <span class="truncate">${h.name}</span>
-          ${isActive ? '<i data-lucide="check" class="w-3 h-3 text-stone-800"></i>' : ''}
+          ${isActive ? '<i data-lucide="check" class="w-3.5 h-3.5 text-stone-900"></i>' : ''}
         `;
         item.onclick = () => {
           state.activeHabitId = h.id;
           saveState();
-          renderGrid();
+          renderMainView();
           toggleHabitDropdown(false);
         };
-        dropdownContainer.appendChild(item);
+        dropdown.appendChild(item);
       });
 
       lucide.createIcons();
+    }
+
+    function renderCalendarGrid() {
+      const container = document.getElementById('calendarDayGrid');
+      container.innerHTML = '';
+
+      const habit = state.habits[state.activeHabitId];
+      if (!habit) return;
+      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
+
+      const year = state.viewYear;
+      const month = state.viewMonth;
+
+      const firstDayOfWeek = new Date(year, month, 1).getDay(); // 0 = Sun
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+
+      // Pad leading blank days from previous month
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'cal-cell rounded-xl border border-stone-200/60 bg-stone-100/40 opacity-40';
+        container.appendChild(blank);
+      }
+
+      // Render Active Days with larger, comfortable touch size
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = `${year}-${month}-${day}`;
+        const entry = habit.logs[key];
+        const levelNum = entry ? entry.level : 0;
+        const levelData = palette.levels[levelNum] || palette.levels[0];
+
+        const cell = document.createElement('div');
+        const isToday = (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day);
+
+        cell.className = `cal-cell rounded-xl bujo-box relative flex flex-col justify-between p-1.5 cursor-pointer shadow-xs ${
+          isToday ? 'ring-2 ring-stone-900 ring-offset-1' : ''
+        }`;
+        cell.style.backgroundColor = levelData.color;
+
+        // Cell Header: Day number + dot indicator if note exists
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-center justify-between w-full leading-none';
+        
+        const num = document.createElement('span');
+        num.className = 'font-mono-num font-bold text-xs';
+        num.style.color = levelData.text;
+        num.textContent = day;
+        topRow.appendChild(num);
+
+        if (entry && entry.note) {
+          const noteDot = document.createElement('span');
+          noteDot.className = 'w-1.5 h-1.5 rounded-full bg-stone-700/80';
+          topRow.appendChild(noteDot);
+        }
+        cell.appendChild(topRow);
+
+        // Center / bottom intensity label for immediate clarity
+        if (levelNum > 0) {
+          const badge = document.createElement('div');
+          badge.className = 'text-[9px] font-mono-num font-bold tracking-tighter truncate text-center';
+          badge.style.color = levelData.text;
+          badge.textContent = levelData.label;
+          cell.appendChild(badge);
+        } else {
+          cell.appendChild(document.createElement('div'));
+        }
+
+        // Touch & Click handling
+        let pressTimer = null;
+        let didLongPress = false;
+
+        cell.addEventListener('touchstart', () => {
+          didLongPress = false;
+          pressTimer = setTimeout(() => {
+            didLongPress = true;
+            openCellModal(year, month, day);
+          }, 380);
+        }, { passive: true });
+
+        cell.addEventListener('touchend', () => {
+          clearTimeout(pressTimer);
+          if (!didLongPress) {
+            cycleCellLevel(key);
+          }
+        });
+
+        cell.addEventListener('touchmove', () => {
+          clearTimeout(pressTimer);
+        });
+
+        cell.addEventListener('click', () => {
+          if (!('ontouchstart' in window)) {
+            cycleCellLevel(key);
+          }
+        });
+
+        cell.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          openCellModal(year, month, day);
+        });
+
+        container.appendChild(cell);
+      }
+    }
+
+    function renderMatrixView() {
+      const container = document.getElementById('matrixRowsContainer');
+      container.innerHTML = '';
+
+      const daysInMonth = new Date(state.viewYear, state.viewMonth + 1, 0).getDate();
+
+      Object.values(state.habits).forEach(h => {
+        const p = PALETTES[h.paletteId] || PALETTES.mauve;
+        const rowWrap = document.createElement('div');
+        rowWrap.className = 'bg-white bujo-box rounded-xl p-2';
+
+        const rowHeader = document.createElement('div');
+        rowHeader.className = 'flex items-center justify-between mb-1.5';
+        rowHeader.innerHTML = `
+          <span class="font-bold text-xs uppercase tracking-wider text-stone-800">${h.name}</span>
+          <span class="text-[10px] text-stone-500 font-mono-num">${p.name}</span>
+        `;
+        rowWrap.appendChild(rowHeader);
+
+        const rowGrid = document.createElement('div');
+        rowGrid.className = 'grid grid-cols-10 sm:grid-cols-16 gap-1';
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const key = `${state.viewYear}-${state.viewMonth}-${d}`;
+          const entry = h.logs[key];
+          const levelNum = entry ? entry.level : 0;
+          const levelData = p.levels[levelNum] || p.levels[0];
+
+          const block = document.createElement('div');
+          block.className = 'aspect-square rounded-md border border-stone-800 flex items-center justify-center font-mono-num text-[9px] font-bold cursor-pointer active:scale-90 transition';
+          block.style.backgroundColor = levelData.color;
+          block.style.color = levelData.text;
+          block.textContent = d;
+
+          block.onclick = () => {
+            const nextLvl = levelNum >= p.levels.length - 1 ? 0 : levelNum + 1;
+            if (nextLvl === 0) delete h.logs[key];
+            else h.logs[key] = { level: nextLvl };
+            saveState();
+            renderMainView();
+          };
+
+          rowGrid.appendChild(block);
+        }
+
+        rowWrap.appendChild(rowGrid);
+        container.appendChild(rowWrap);
+      });
+    }
+
+    function cycleCellLevel(dateKey) {
+      const habit = state.habits[state.activeHabitId];
+      if (!habit) return;
+      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
+      const maxLevel = palette.levels.length - 1;
+
+      const current = habit.logs[dateKey] ? habit.logs[dateKey].level : 0;
+      const next = current >= maxLevel ? 0 : current + 1;
+
+      if (next === 0) {
+        delete habit.logs[dateKey];
+      } else {
+        habit.logs[dateKey] = {
+          level: next,
+          note: habit.logs[dateKey]?.note || ''
+        };
+      }
+
+      saveState();
+      renderMainView();
+    }
+
+    let activeModalKey = null;
+
+    function openCellModal(year, month, day) {
+      activeModalKey = `${year}-${month}-${day}`;
+      const habit = state.habits[state.activeHabitId];
+      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
+      const currentEntry = habit.logs[activeModalKey] || { level: 0, note: '' };
+
+      document.getElementById('modalHabitName').textContent = habit.name;
+      document.getElementById('modalDateFormatted').textContent = `${MONTH_NAMES[month]} ${day}, ${year}`;
+      document.getElementById('modalNoteInput').value = currentEntry.note || '';
+
+      const list = document.getElementById('modalLevelsList');
+      list.innerHTML = '';
+
+      palette.levels.forEach(lvl => {
+        const btn = document.createElement('button');
+        const isSelected = lvl.level === currentEntry.level;
+        btn.className = `flex items-center justify-between px-3 py-1.5 rounded-xl border-2 text-xs font-bold transition ${
+          isSelected ? 'border-stone-900 bg-stone-100 ring-2 ring-stone-900/30' : 'border-stone-200 hover:border-stone-400 bg-white'
+        }`;
+
+        btn.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-md border border-stone-800" style="background-color: ${lvl.color}"></span>
+            <span class="text-stone-900">${lvl.label}</span>
+          </div>
+          ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-stone-900"></i>' : ''}
+        `;
+
+        btn.onclick = () => {
+          if (lvl.level === 0) {
+            delete habit.logs[activeModalKey];
+          } else {
+            habit.logs[activeModalKey] = {
+              level: lvl.level,
+              note: document.getElementById('modalNoteInput').value.trim()
+            };
+          }
+          saveState();
+          renderMainView();
+          closeModal('cellModal');
+          showToast(`Logged for ${MONTH_NAMES[month]} ${day}`);
+        };
+
+        list.appendChild(btn);
+      });
+
+      lucide.createIcons();
+      document.getElementById('cellModal').classList.remove('hidden');
+    }
+
+    function saveActiveCellNote() {
+      if (!activeModalKey) return;
+      const habit = state.habits[state.activeHabitId];
+      const note = document.getElementById('modalNoteInput').value.trim();
+      
+      if (habit.logs[activeModalKey]) {
+        habit.logs[activeModalKey].note = note;
+      } else if (note) {
+        habit.logs[activeModalKey] = { level: 1, note };
+      }
+
+      saveState();
+      renderMainView();
+      closeModal('cellModal');
+    }
+
+    function clearActiveCell() {
+      if (!activeModalKey) return;
+      const habit = state.habits[state.activeHabitId];
+      if (habit) {
+        delete habit.logs[activeModalKey];
+        saveState();
+        renderMainView();
+      }
+      closeModal('cellModal');
+    }
+
+    function renderLegend() {
+      const container = document.getElementById('legendSwatches');
+      container.innerHTML = '';
+      const habit = state.habits[state.activeHabitId];
+      if (!habit) return;
+      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
+
+      palette.levels.forEach(lvl => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center gap-1 text-[11px] font-semibold text-stone-800 bg-white px-2 py-0.5 rounded-lg border border-stone-300';
+
+        const colorBox = document.createElement('div');
+        colorBox.className = 'w-3 h-3 rounded-xs border border-stone-800 shrink-0';
+        colorBox.style.backgroundColor = lvl.color;
+
+        const label = document.createElement('span');
+        label.className = 'font-mono-num text-[10px] tracking-tight';
+        label.textContent = lvl.label;
+
+        item.appendChild(colorBox);
+        item.appendChild(label);
+        container.appendChild(item);
+      });
+    }
+
+    function updateStats() {
+      const habit = state.habits[state.activeHabitId];
+      if (!habit) return;
+      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
+
+      const year = state.viewYear;
+      const month = state.viewMonth;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let activeDaysCount = 0;
+      let totalMinutes = 0;
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = `${year}-${month}-${d}`;
+        const entry = habit.logs[key];
+        if (entry && entry.level > 0) {
+          activeDaysCount++;
+          const lvlObj = palette.levels[entry.level];
+          if (lvlObj) totalMinutes += lvlObj.minutes;
+        }
+      }
+
+      document.getElementById('statMonthlyDays').textContent = activeDaysCount;
+      const rate = Math.round((activeDaysCount / daysInMonth) * 100);
+      document.getElementById('statMonthlyRate').textContent = `${rate}%`;
+
+      const hours = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+      document.getElementById('statMonthlyTime').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
+      // Streak calculation
+      let streak = 0;
+      let check = new Date();
+      for (let i = 0; i < 365; i++) {
+        const k = `${check.getFullYear()}-${check.getMonth()}-${check.getDate()}`;
+        if (habit.logs[k] && habit.logs[k].level > 0) {
+          streak++;
+          check.setDate(check.getDate() - 1);
+        } else {
+          if (i === 0 && check.getDate() === new Date().getDate()) {
+            check.setDate(check.getDate() - 1);
+            continue;
+          }
+          break;
+        }
+      }
+      document.getElementById('statMonthlyStreak').innerHTML = `${streak} <span class="text-[10px] font-normal">days</span>`;
+    }
+
+    function logTodayDirect() {
+      const now = new Date();
+      state.viewYear = now.getFullYear();
+      state.viewMonth = now.getMonth();
+      const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+      cycleCellLevel(todayKey);
+      showToast('Logged for today!');
+    }
+
+    function navigateMonth(delta) {
+      state.viewMonth += delta;
+      if (state.viewMonth < 0) {
+        state.viewMonth = 11;
+        state.viewYear--;
+      } else if (state.viewMonth > 11) {
+        state.viewMonth = 0;
+        state.viewYear++;
+      }
+      saveState();
+      renderMainView();
+    }
+
+    function switchView(mode) {
+      state.viewMode = mode;
+      saveState();
+      renderMainView();
+    }
+
+    function openMonthPickerModal() {
+      pickerYearTemp = state.viewYear;
+      document.getElementById('pickerYearDisplay').textContent = pickerYearTemp;
+      const grid = document.getElementById('monthPickerGrid');
+      grid.innerHTML = '';
+
+      MONTH_NAMES.forEach((m, idx) => {
+        const btn = document.createElement('button');
+        const isCurrent = (pickerYearTemp === state.viewYear && idx === state.viewMonth);
+        btn.className = `py-2 rounded-xl text-xs font-bold border transition ${
+          isCurrent ? 'bg-stone-900 text-white border-stone-900 shadow' : 'bg-stone-50 hover:bg-stone-100 text-stone-800 border-stone-200'
+        }`;
+        btn.textContent = m.substring(0, 3);
+        btn.onclick = () => {
+          state.viewYear = pickerYearTemp;
+          state.viewMonth = idx;
+          saveState();
+          renderMainView();
+          closeModal('monthPickerModal');
+        };
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('monthPickerModal').classList.remove('hidden');
+    }
+
+    function adjustPickerYear(delta) {
+      pickerYearTemp += delta;
+      document.getElementById('pickerYearDisplay').textContent = pickerYearTemp;
     }
 
     function toggleHabitDropdown(force) {
@@ -840,107 +1021,105 @@
       }
     }
 
-    function changeYear(delta) {
-      state.currentYear += delta;
-      saveState();
-      renderGrid();
-    }
-
     function openNewHabitModal() {
       toggleHabitDropdown(false);
-      const select = document.getElementById('newHabitPaletteSelect');
-      select.innerHTML = '';
+      const sel = document.getElementById('newHabitThemeSelect');
+      sel.innerHTML = '';
       Object.values(PALETTES).forEach(p => {
         const opt = document.createElement('option');
         opt.value = p.id;
         opt.textContent = p.name;
-        select.appendChild(opt);
+        sel.appendChild(opt);
       });
-      document.getElementById('newHabitInput').value = '';
+      document.getElementById('newHabitNameInput').value = '';
       document.getElementById('newHabitModal').classList.remove('hidden');
     }
 
-    function saveNewHabit() {
-      const name = document.getElementById('newHabitInput').value.trim();
+    function createNewHabit() {
+      const name = document.getElementById('newHabitNameInput').value.trim();
       if (!name) return;
-      const paletteId = document.getElementById('newHabitPaletteSelect').value;
-      const newId = 'habit_' + Date.now();
+      const paletteId = document.getElementById('newHabitThemeSelect').value;
+      const id = 'habit_' + Date.now();
 
-      state.habits[newId] = {
-        id: newId,
-        name: name,
-        paletteId: paletteId,
-        logs: {}
-      };
-      state.activeHabitId = newId;
+      state.habits[id] = { id, name, paletteId, logs: {} };
+      state.activeHabitId = id;
 
       saveState();
-      renderGrid();
+      renderMainView();
       closeModal('newHabitModal');
-      showToast(`Created habit: ${name}`);
+      showToast(`Created ${name}`);
     }
 
-    function deleteCurrentHabit() {
-      const habitKeys = Object.keys(state.habits);
-      if (habitKeys.length <= 1) {
-        showToast('Keep at least one habit');
+    function deleteActiveHabit() {
+      const keys = Object.keys(state.habits);
+      if (keys.length <= 1) {
+        showToast('Keep at least 1 habit');
         return;
       }
-      const habitName = state.habits[state.activeHabitId]?.name || 'Habit';
       delete state.habits[state.activeHabitId];
       state.activeHabitId = Object.keys(state.habits)[0];
-
       saveState();
-      renderGrid();
+      renderMainView();
       closeModal('settingsModal');
-      showToast(`Deleted ${habitName}`);
+      showToast('Habit deleted');
     }
 
-    function logTodayPrompt() {
-      const now = new Date();
-      openCellModal(state.currentYear, now.getMonth(), now.getDate());
-    }
+    function openPaletteModal() {
+      const habit = state.habits[state.activeHabitId];
+      const list = document.getElementById('paletteListContainer');
+      list.innerHTML = '';
 
-    async function exportJournalImage() {
-      showToast('Generating snapshot...');
-      const element = document.getElementById('journalCard');
-      
-      try {
-        const canvas = await html2canvas(element, {
-          scale: 2,
-          backgroundColor: '#faf7f2',
-          useCORS: true
+      Object.values(PALETTES).forEach(p => {
+        const card = document.createElement('div');
+        const isActive = habit && habit.paletteId === p.id;
+        card.className = `p-2.5 rounded-xl border-2 cursor-pointer transition flex flex-col gap-1.5 ${
+          isActive ? 'border-stone-900 bg-stone-50' : 'border-stone-200 hover:border-stone-400 bg-white'
+        }`;
+
+        let swatches = '<div class="flex items-center gap-1">';
+        p.levels.forEach(lvl => {
+          swatches += `<span class="w-4 h-4 rounded border border-stone-800" style="background-color: ${lvl.color}"></span>`;
         });
+        swatches += '</div>';
 
-        const image = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.download = `HabitTracker_${state.habits[state.activeHabitId].name}_${state.currentYear}.png`;
-        link.href = image;
-        link.click();
-        showToast('Image downloaded!');
-      } catch (err) {
-        console.error(err);
-        showToast('Export failed');
-      }
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-stone-900">${p.name}</span>
+            ${isActive ? '<span class="text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded">Active</span>' : ''}
+          </div>
+          ${swatches}
+        `;
+
+        card.onclick = () => {
+          if (habit) {
+            habit.paletteId = p.id;
+            saveState();
+            renderMainView();
+            closeModal('paletteModal');
+            showToast(`Theme changed to ${p.name}`);
+          }
+        };
+
+        list.appendChild(card);
+      });
+
+      document.getElementById('paletteModal').classList.remove('hidden');
     }
 
-    // SQL Exporter: Generates complete DDL and INSERT script for SQLite / PostgreSQL / MySQL
-    function exportDataSQL() {
+    function exportSqlBackup() {
       let sql = `-- ========================================================\n`;
-      sql += `-- Bullet Journal Habit Tracker SQLite / SQL Backup\n`;
+      sql += `-- Monthly Bullet Journal Habit Tracker SQLite Backup\n`;
       sql += `-- Generated: ${new Date().toISOString()}\n`;
       sql += `-- ========================================================\n\n`;
 
       sql += `BEGIN TRANSACTION;\n\n`;
 
-      // 1. Habits Table
       sql += `CREATE TABLE IF NOT EXISTS habits (\n`;
       sql += `  id TEXT PRIMARY KEY,\n`;
       sql += `  name TEXT NOT NULL,\n`;
       sql += `  palette_id TEXT NOT NULL\n`;
       sql += `);\n\n`;
 
-      // 2. Entries Table
       sql += `CREATE TABLE IF NOT EXISTS habit_entries (\n`;
       sql += `  id INTEGER PRIMARY KEY AUTOINCREMENT,\n`;
       sql += `  habit_id TEXT NOT NULL,\n`;
@@ -949,150 +1128,138 @@
       sql += `  month INTEGER NOT NULL,\n`;
       sql += `  day INTEGER NOT NULL,\n`;
       sql += `  intensity_level INTEGER NOT NULL,\n`;
+      sql += `  note TEXT,\n`;
       sql += `  FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE\n`;
       sql += `);\n\n`;
 
-      // Insert Habits
       Object.values(state.habits).forEach(h => {
         const safeName = h.name.replace(/'/g, "''");
         sql += `INSERT INTO habits (id, name, palette_id) VALUES ('${h.id}', '${safeName}', '${h.paletteId}');\n`;
       });
       sql += `\n`;
 
-      // Insert Entries
-      let entryCount = 0;
+      let count = 0;
       Object.values(state.habits).forEach(h => {
-        Object.entries(h.logs).forEach(([dateKey, level]) => {
-          const parts = dateKey.split('-').map(Number);
+        Object.entries(h.logs).forEach(([k, item]) => {
+          const parts = k.split('-').map(Number);
           if (parts.length === 3) {
             const [y, m, d] = parts;
-            sql += `INSERT INTO habit_entries (habit_id, date_key, year, month, day, intensity_level) VALUES ('${h.id}', '${dateKey}', ${y}, ${m}, ${d}, ${level});\n`;
-            entryCount++;
+            const lvl = typeof item === 'object' ? item.level : item;
+            const note = (typeof item === 'object' && item.note) ? `'${item.note.replace(/'/g, "''")}'` : 'NULL';
+            sql += `INSERT INTO habit_entries (habit_id, date_key, year, month, day, intensity_level, note) VALUES ('${h.id}', '${k}', ${y}, ${m}, ${d}, ${lvl}, ${note});\n`;
+            count++;
           }
         });
       });
 
       sql += `\nCOMMIT;\n`;
-      sql += `-- Total Habits: ${Object.keys(state.habits).length}, Total Logged Days: ${entryCount}\n`;
+      sql += `-- Export complete. Habits: ${Object.keys(state.habits).length}, Total records: ${count}\n`;
 
-      const blob = new Blob([sql], { type: 'text/sql;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `habits_backup_${state.currentYear}.sql`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('SQL file downloaded');
+      downloadBlob(sql, `monthly_habits_${state.viewYear}_${state.viewMonth + 1}.sql`, 'text/sql;charset=utf-8;');
+      showToast('Downloaded .sql file');
     }
 
-    function exportDataJSON() {
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute('href', dataStr);
-      downloadAnchor.setAttribute('download', `habit_tracker_backup_${Date.now()}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast('Backup JSON downloaded');
+    function exportJsonBackup() {
+      const str = JSON.stringify(state, null, 2);
+      downloadBlob(str, `habits_backup_${Date.now()}.json`, 'application/json;charset=utf-8;');
+      showToast('Exported JSON backup');
     }
 
-    function exportDataCSV() {
-      const habit = state.habits[state.activeHabitId];
-      if (!habit) return;
-      const palette = PALETTES[habit.paletteId] || PALETTES.mauve;
-
-      let csv = `Habit,DateKey,Year,Month,Day,Level,Label\n`;
-      Object.entries(habit.logs).forEach(([key, lvl]) => {
-        const [y, m, d] = key.split('-');
-        const lvlInfo = palette.levels[lvl] || { label: 'Custom' };
-        csv += `"${habit.name}","${key}",${y},${parseInt(m)+1},${d},${lvl},"${lvlInfo.label}"\n`;
-      });
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${habit.name}_${state.currentYear}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('CSV Exported');
-    }
-
-    function importDataFile(event) {
-      const file = event.target.files[0];
+    function handleFileImport(e) {
+      const file = e.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const content = e.target.result;
-        
-        // Handle JSON import
+      reader.onload = function(evt) {
+        const content = evt.target.result;
         if (file.name.endsWith('.json')) {
           try {
-            const imported = JSON.parse(content);
-            if (imported && imported.habits) {
-              state = imported;
+            const parsed = JSON.parse(content);
+            if (parsed && parsed.habits) {
+              state = parsed;
               saveState();
-              renderGrid();
+              renderMainView();
               closeModal('settingsModal');
-              showToast('Habits successfully restored!');
-              return;
+              showToast('Habits restored successfully!');
             }
           } catch (err) {
             showToast('Invalid JSON file');
           }
-        } 
-        // Handle SQL script parsing
-        else if (file.name.endsWith('.sql')) {
-          try {
-            parseAndLoadSQL(content);
-            saveState();
-            renderGrid();
-            closeModal('settingsModal');
-            showToast('Imported from SQL backup!');
-          } catch (err) {
-            console.error(err);
-            showToast('Error parsing SQL file');
-          }
+        } else if (file.name.endsWith('.sql')) {
+          parseSqlImport(content);
         }
       };
       reader.readAsText(file);
     }
 
-    // Lightweight parser for our generated SQL statements
-    function parseAndLoadSQL(sqlText) {
-      const lines = sqlText.split('\n');
-      const newHabits = {};
+    function parseSqlImport(sql) {
+      try {
+        const lines = sql.split('\n');
+        const importedHabits = {};
 
-      lines.forEach(line => {
-        line = line.trim();
-        // Parse habits insert: INSERT INTO habits (id, name, palette_id) VALUES ('...', '...', '...');
-        if (line.startsWith("INSERT INTO habits")) {
-          const match = line.match(/VALUES\s*\('(.*?)',\s*'(.*?)',\s*'(.*?)'\)/i);
-          if (match) {
-            const [, id, name, paletteId] = match;
-            newHabits[id] = { id, name: name.replace(/''/g, "'"), paletteId, logs: {} };
-          }
-        }
-        // Parse entries: INSERT INTO habit_entries (...) VALUES ('habit_id', 'date_key', y, m, d, level);
-        if (line.startsWith("INSERT INTO habit_entries")) {
-          const match = line.match(/VALUES\s*\('(.*?)',\s*'(.*?)',\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\)/i);
-          if (match) {
-            const [, habitId, dateKey, , , , level] = match;
-            if (newHabits[habitId]) {
-              newHabits[habitId].logs[dateKey] = parseInt(level, 10);
+        lines.forEach(l => {
+          l = l.trim();
+          if (l.startsWith("INSERT INTO habits")) {
+            const m = l.match(/VALUES\s*\('(.*?)',\s*'(.*?)',\s*'(.*?)'\)/i);
+            if (m) {
+              const [, id, name, paletteId] = m;
+              importedHabits[id] = { id, name: name.replace(/''/g, "'"), paletteId, logs: {} };
             }
           }
-        }
-      });
+          if (l.startsWith("INSERT INTO habit_entries")) {
+            const m = l.match(/VALUES\s*\('(.*?)',\s*'(.*?)',\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)/i);
+            if (m) {
+              const [, habitId, dateKey, , , , lvl] = m;
+              if (importedHabits[habitId]) {
+                importedHabits[habitId].logs[dateKey] = { level: parseInt(lvl, 10), note: '' };
+              }
+            }
+          }
+        });
 
-      if (Object.keys(newHabits).length > 0) {
-        state.habits = newHabits;
-        state.activeHabitId = Object.keys(newHabits)[0];
+        if (Object.keys(importedHabits).length > 0) {
+          state.habits = importedHabits;
+          state.activeHabitId = Object.keys(importedHabits)[0];
+          saveState();
+          renderMainView();
+          closeModal('settingsModal');
+          showToast('Imported SQL backup!');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Could not parse SQL');
+      }
+    }
+
+    function downloadBlob(content, filename, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    async function exportMonthlyCard() {
+      showToast('Rendering snapshot...');
+      const card = document.getElementById('journalCard');
+      try {
+        const canvas = await html2canvas(card, {
+          scale: 2,
+          backgroundColor: '#f7f4ee',
+          useCORS: true
+        });
+        const img = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = img;
+        a.download = `Habit_${state.habits[state.activeHabitId].name}_${MONTH_NAMES[state.viewMonth]}_${state.viewYear}.png`;
+        a.click();
+        showToast('Image saved!');
+      } catch (err) {
+        showToast('Snapshot failed');
       }
     }
 
@@ -1106,9 +1273,8 @@
 
     let toastTimer = null;
     function showToast(msg) {
-      const toast = document.getElementById('toastMessage');
-      const text = document.getElementById('toastText');
-      text.textContent = msg;
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastText').textContent = msg;
       toast.classList.remove('opacity-0');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
@@ -1118,7 +1284,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadSavedState();
-      renderGrid();
+      renderMainView();
       lucide.createIcons();
 
       const habitBtn = document.getElementById('habitDropdownBtn');
