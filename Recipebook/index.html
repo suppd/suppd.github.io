@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Savor & Share - Digital Culinary Recipe Book</title>
   
   <!-- Google Fonts -->
@@ -43,18 +43,18 @@
 
   <style>
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.04);
+      background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(224, 107, 66, 0.3);
+      background: rgba(224, 107, 66, 0.25);
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(224, 107, 66, 0.6);
+      background: rgba(224, 107, 66, 0.5);
     }
     .line-clamp-2 {
       display: -webkit-box;
@@ -84,11 +84,31 @@
 </head>
 <body class="bg-amber-50/40 text-stone-800 font-sans antialiased min-h-screen flex flex-col selection:bg-culinary-500 selection:text-white">
 
-  <!-- Top Navigation (Optimized for Mobile & Desktop) -->
+  <!-- Datalist for Standard Culinary Units with Manual Typing Support -->
+  <datalist id="culinary-units-list">
+    <option value="g">Grams (g)</option>
+    <option value="kg">Kilograms (kg)</option>
+    <option value="ml">Milliliters (ml)</option>
+    <option value="l">Liters (L)</option>
+    <option value="dl">Deciliters (dl)</option>
+    <option value="cl">Centiliters (cl)</option>
+    <option value="tbsp">Tablespoon (tbsp)</option>
+    <option value="tsp">Teaspoon (tsp)</option>
+    <option value="cup">Cup</option>
+    <option value="pinch">Pinch</option>
+    <option value="piece">Piece (stuks)</option>
+    <option value="can">Can (blik)</option>
+    <option value="slice">Slice (plak)</option>
+    <option value="clove">Clove (teentje)</option>
+    <option value="bunch">Bunch (bosje)</option>
+    <option value="hele">Hele</option>
+  </datalist>
+
+  <!-- Top Navigation Bar -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-14 sm:h-16 gap-2">
-        <!-- Logo & Title -->
+        <!-- Logo -->
         <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="app.showHomeView()">
           <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-culinary-500 text-white flex items-center justify-center shadow-md shadow-culinary-500/20">
             <i data-lucide="utensils-crossed" class="w-4 h-4 sm:w-5 sm:h-5"></i>
@@ -100,7 +120,7 @@
           </div>
         </div>
 
-        <!-- Sync Status & Actions -->
+        <!-- Sync Indicator & Action Buttons -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <div id="sync-badge" class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -113,7 +133,7 @@
             <span class="hidden sm:inline">Import</span>
           </button>
 
-          <!-- New Recipe Button (Clean, compact on mobile) -->
+          <!-- New Recipe Button -->
           <button onclick="app.openRecipeEditor()" class="h-9 px-3 sm:px-4 bg-culinary-500 hover:bg-culinary-600 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition flex items-center gap-1.5 whitespace-nowrap">
             <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]"></i>
             <span>New Recipe</span>
@@ -150,13 +170,13 @@
     </button>
   </div>
 
-  <!-- Main Application Body -->
+  <!-- Main Viewport -->
   <main class="flex-1 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
     
     <!-- RECIPES DASHBOARD VIEW -->
     <div id="recipe-list-view" class="space-y-4 sm:space-y-5">
       
-      <!-- Standalone Sleek Search Bar -->
+      <!-- Search Bar -->
       <div class="relative w-full">
         <i data-lucide="search" class="w-4 h-4 sm:w-5 sm:h-5 text-stone-400 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
         <input 
@@ -174,7 +194,7 @@
       <!-- Categories Filter Strip -->
       <div class="flex items-center justify-between gap-3 overflow-x-auto pb-1 scrollbar-none">
         <div class="flex items-center gap-1.5 sm:gap-2" id="category-pills">
-          <!-- Populated by JS -->
+          <!-- Injected via JS -->
         </div>
         <div class="text-xs text-stone-400 font-medium whitespace-nowrap pl-1 shrink-0">
           <span id="matching-count">0</span> recipes
@@ -206,7 +226,6 @@
 
     <!-- RECIPE DETAIL VIEW -->
     <div id="recipe-detail-view" class="hidden space-y-4 sm:space-y-6">
-      <!-- Back Navigation & Action Bar -->
       <div class="no-print flex items-center justify-between pb-1 gap-2 flex-wrap sm:flex-nowrap">
         <button onclick="app.showHomeView()" class="h-10 px-3.5 py-2 text-stone-600 hover:text-stone-900 bg-white rounded-xl text-sm font-semibold transition flex items-center gap-2 border border-stone-200 shadow-xs">
           <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -224,7 +243,6 @@
           <button onclick="app.editCurrentRecipe()" class="h-10 w-10 flex items-center justify-center text-stone-600 hover:text-stone-900 bg-white border border-stone-200 rounded-xl transition shadow-xs" title="Edit recipe">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
           </button>
-          <!-- Prominent 44px+ Mobile-friendly Delete Button -->
           <button onclick="app.deleteCurrentRecipe()" class="h-10 px-3 sm:px-3.5 bg-red-50 hover:bg-red-100 active:bg-red-200 text-red-600 border border-red-200 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5" title="Delete recipe">
             <i data-lucide="trash-2" class="w-4 h-4 text-red-500"></i>
             <span>Delete</span>
@@ -232,23 +250,21 @@
         </div>
       </div>
 
-      <!-- Recipe Content Container -->
+      <!-- Recipe Card Container -->
       <div class="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
-        <!-- Hero Image & Title Banner -->
+        <!-- Hero Image -->
         <div class="relative h-64 sm:h-96 w-full bg-stone-900 overflow-hidden">
           <img id="detail-image" src="" alt="Recipe Banner" class="w-full h-full object-cover transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=1200&q=80'">
           <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>
           
           <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-10 text-white">
-            <div class="flex flex-wrap items-center gap-2 mb-2 sm:mb-3" id="detail-tags">
-              <!-- Category & tags injected -->
-            </div>
+            <div class="flex flex-wrap items-center gap-2 mb-2 sm:mb-3" id="detail-tags"></div>
             <h1 id="detail-title" class="text-2xl sm:text-5xl font-serif font-bold text-white tracking-tight mb-2"></h1>
             <p id="detail-description" class="text-stone-300 text-xs sm:text-base max-w-3xl line-clamp-2"></p>
           </div>
         </div>
 
-        <!-- Recipe Quick Metrics Bar -->
+        <!-- Metrics Strip -->
         <div class="grid grid-cols-2 sm:grid-cols-4 border-b border-stone-100 bg-stone-50/60 divide-x divide-stone-100">
           <div class="p-3.5 sm:p-5 flex items-center gap-3">
             <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
@@ -288,7 +304,7 @@
           </div>
         </div>
 
-        <!-- Recipe Main Columns: Ingredients & Method -->
+        <!-- Ingredients & Method Columns -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-5 sm:p-10">
           
           <!-- Ingredients Column -->
@@ -299,7 +315,6 @@
                 <h3 class="text-xl font-serif font-bold text-stone-900">Ingredients</h3>
               </div>
               
-              <!-- Dynamic Serving Scaler -->
               <div class="flex items-center gap-1.5 bg-stone-100 p-1 rounded-xl text-xs font-semibold">
                 <span class="text-stone-500 pl-2">Scale:</span>
                 <button onclick="app.scaleServings(-1)" class="w-6 h-6 rounded-lg bg-white shadow-sm flex items-center justify-center text-stone-700 hover:bg-stone-200">-</button>
@@ -309,11 +324,9 @@
             </div>
 
             <p class="text-xs text-stone-400 italic">Check off ingredients as you prepare them:</p>
-            <ul id="detail-ingredients-list" class="space-y-2.5">
-              <!-- Ingredients injected -->
-            </ul>
+            <ul id="detail-ingredients-list" class="space-y-2.5"></ul>
 
-            <!-- Interactive Kitchen Timer Widget -->
+            <!-- Kitchen Timer Widget -->
             <div class="mt-8 bg-stone-50 rounded-2xl p-5 border border-stone-200">
               <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-bold text-stone-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -341,11 +354,8 @@
               <span id="steps-progress" class="text-xs font-semibold text-stone-400">0 / 0 Done</span>
             </div>
 
-            <ol id="detail-steps-list" class="space-y-4">
-              <!-- Steps injected -->
-            </ol>
+            <ol id="detail-steps-list" class="space-y-4"></ol>
 
-            <!-- Notes Section -->
             <div id="detail-notes-card" class="hidden mt-8 p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80">
               <h4 class="text-xs uppercase font-bold text-amber-800 tracking-wider flex items-center gap-1.5 mb-1.5">
                 <i data-lucide="lightbulb" class="w-4 h-4 text-amber-600"></i> Chef's Tips & Notes
@@ -361,9 +371,9 @@
 
   <!-- MODAL: RECIPE EDITOR (Create / Edit) -->
   <div id="recipe-editor-modal" class="fixed inset-0 z-50 hidden flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm overflow-hidden">
-    <div class="flex flex-col w-full h-full sm:h-auto sm:max-h-[90vh] max-w-2xl bg-white rounded-none sm:rounded-2xl shadow-2xl overflow-hidden">
+    <div class="flex flex-col w-full h-full sm:h-auto sm:max-h-[92vh] max-w-2xl bg-white rounded-none sm:rounded-2xl shadow-2xl overflow-hidden">
       
-      <!-- Sticky Modal Header (Always pinned at top of viewport) -->
+      <!-- Sticky Pinned Header -->
       <div class="sticky top-0 z-20 shrink-0 bg-white border-b border-stone-200 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-culinary-100 text-culinary-600 flex items-center justify-center">
@@ -386,9 +396,9 @@
       <form id="recipe-form" onsubmit="app.handleSaveRecipe(event)" class="flex flex-col flex-1 min-h-0 overflow-hidden">
         <input type="hidden" id="edit-recipe-id" value="">
 
-        <!-- Scrollable Body (Overscroll contained, guaranteed visible title) -->
+        <!-- Scrollable Body with Contained Overscroll -->
         <div id="recipe-editor-scroll-body" class="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-5">
-          <!-- Recipe Title (First Field) -->
+          <!-- Recipe Title (Always First) -->
           <div>
             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">Recipe Title *</label>
             <input type="text" id="recipe-input-title" required placeholder="e.g. Creamy Tuscan Garlic Chicken" class="w-full px-4 py-3 rounded-xl border border-stone-200 text-stone-900 font-semibold text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-culinary-500 focus:border-culinary-500 transition shadow-xs">
@@ -443,30 +453,62 @@
             </div>
           </div>
 
-          <!-- Image URL with Preset Pickers -->
-          <div>
-            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Cover Image URL</label>
-            <div class="flex gap-2">
-              <input type="url" id="recipe-input-image" placeholder="https://images.unsplash.com/..." class="flex-1 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:ring-2 focus:ring-culinary-500" onchange="app.updateEditorImagePreview(this.value)">
-              <button type="button" onclick="app.pickRandomCoverPhoto()" class="px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-semibold whitespace-nowrap active:scale-95 transition">
-                Random Photo
+          <!-- Cover Image: File Upload + URL + Preset Pickers -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider">Recipe Photo</label>
+              <span class="text-[11px] text-stone-400">Upload or use Web URL</span>
+            </div>
+            
+            <!-- Upload & Action Bar -->
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="h-9 px-3 bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-700 rounded-xl text-xs font-semibold cursor-pointer transition flex items-center gap-1.5 border border-stone-300">
+                <i data-lucide="upload" class="w-3.5 h-3.5 text-culinary-500"></i>
+                <span>Upload Photo</span>
+                <input type="file" id="recipe-file-input" accept="image/*" class="hidden" onchange="app.handleImageFileUpload(event)">
+              </label>
+
+              <button type="button" onclick="app.pickRandomCoverPhoto()" class="h-9 px-3 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-semibold whitespace-nowrap active:scale-95 transition flex items-center gap-1.5 border border-stone-200">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                <span>Random Photo</span>
+              </button>
+
+              <button type="button" onclick="app.toggleUrlInput()" class="h-9 px-2.5 text-stone-500 hover:text-stone-800 text-xs font-medium ml-auto flex items-center gap-1">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                <span>Paste Link</span>
               </button>
             </div>
-            <div class="mt-2 h-32 rounded-xl border border-stone-200 bg-stone-50 overflow-hidden relative">
+
+            <!-- Optional Image URL field -->
+            <div id="url-input-container" class="hidden pt-1">
+              <input type="url" id="recipe-input-image" placeholder="Paste image web link (https://...)" class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs text-stone-800 focus:ring-2 focus:ring-culinary-500" onchange="app.updateEditorImagePreview(this.value)">
+            </div>
+
+            <!-- Image Preview Box -->
+            <div class="relative h-36 rounded-2xl border border-stone-200 bg-stone-50 overflow-hidden group">
               <img id="editor-image-preview" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" alt="Preview" class="w-full h-full object-cover">
+              <div id="image-upload-loading" class="hidden absolute inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center text-white text-xs font-semibold gap-2">
+                <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Compressing image...
+              </div>
             </div>
           </div>
 
-          <!-- Ingredients Builder -->
+          <!-- Ingredients Builder (Fully Responsive, Dropdown Units + Manual Custom Units) -->
           <div class="pt-4 border-t border-stone-200">
             <div class="flex items-center justify-between mb-2">
-              <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider">Ingredients List</label>
-              <button type="button" onclick="app.addIngredientRow()" class="text-xs font-semibold text-culinary-600 hover:text-culinary-700 flex items-center gap-1 active:scale-95">
+              <div>
+                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider">Ingredients List</label>
+                <p class="text-[11px] text-stone-400">Select unit or type your own freely</p>
+              </div>
+              <button type="button" onclick="app.addIngredientRow()" class="h-8 px-2.5 rounded-lg bg-culinary-50 text-xs font-semibold text-culinary-600 hover:bg-culinary-100 flex items-center gap-1 active:scale-95 transition">
                 <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Item
               </button>
             </div>
-            <div id="editor-ingredients-container" class="space-y-2">
-              <!-- Dynamic ingredient input rows -->
+
+            <!-- Container for responsive rows -->
+            <div id="editor-ingredients-container" class="space-y-2 w-full">
+              <!-- Dynamically rendered rows -->
             </div>
           </div>
 
@@ -474,12 +516,12 @@
           <div class="pt-4 border-t border-stone-200">
             <div class="flex items-center justify-between mb-2">
               <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider">Cooking Steps</label>
-              <button type="button" onclick="app.addStepRow()" class="text-xs font-semibold text-culinary-600 hover:text-culinary-700 flex items-center gap-1 active:scale-95">
+              <button type="button" onclick="app.addStepRow()" class="h-8 px-2.5 rounded-lg bg-culinary-50 text-xs font-semibold text-culinary-600 hover:bg-culinary-100 flex items-center gap-1 active:scale-95 transition">
                 <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Step
               </button>
             </div>
-            <div id="editor-steps-container" class="space-y-2.5">
-              <!-- Dynamic step rows -->
+            <div id="editor-steps-container" class="space-y-2.5 w-full">
+              <!-- Dynamically rendered steps -->
             </div>
           </div>
 
@@ -490,7 +532,7 @@
           </div>
         </div>
 
-        <!-- Sticky Modal Footer (Always pinned at bottom of viewport) -->
+        <!-- Sticky Pinned Footer -->
         <div class="sticky bottom-0 z-20 shrink-0 bg-stone-50 border-t border-stone-200 px-4 py-3 sm:px-6 flex items-center justify-end gap-3">
           <button type="button" onclick="app.closeRecipeEditor()" class="px-4 py-2.5 text-stone-600 hover:bg-stone-200/60 rounded-xl text-sm font-semibold transition active:scale-95">
             Cancel
@@ -552,7 +594,7 @@
     </div>
   </div>
 
-  <!-- Toast notification system -->
+  <!-- Toast system -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- Direct Bulletproof Confirm Dialog Modal -->
@@ -576,13 +618,12 @@
     </div>
   </div>
 
-  <!-- Application Script Module -->
+  <!-- Application Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Application state
     const state = {
       appId: typeof __app_id !== 'undefined' ? __app_id : 'savor-recipe-hub',
       userId: null,
@@ -604,7 +645,6 @@
 
     const LOCAL_RECIPES_KEY = 'savor_shared_recipes_store';
 
-    // Curated fallback photography
     const CULINARY_PHOTOS = [
       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
@@ -628,21 +668,21 @@
         tags: ["Italian", "Poultry", "One-Pan", "Comfort Food"],
         imageUrl: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=1200&q=80",
         ingredients: [
-          { amount: "2", unit: "large", item: "boneless chicken breasts, halved horizontally" },
+          { amount: "2", unit: "piece", item: "boneless chicken breasts, halved horizontally" },
           { amount: "2", unit: "tbsp", item: "olive oil" },
-          { amount: "4", unit: "cloves", item: "garlic, finely minced" },
-          { amount: "1", unit: "cup", item: "heavy cream" },
-          { amount: "0.5", unit: "cup", item: "chicken broth" },
-          { amount: "0.5", unit: "cup", item: "sun-dried tomatoes, drained & sliced" },
-          { amount: "3", unit: "cups", item: "fresh baby spinach" },
-          { amount: "0.5", unit: "cup", item: "parmesan cheese, freshly grated" },
+          { amount: "4", unit: "clove", item: "garlic, finely minced" },
+          { amount: "240", unit: "ml", item: "heavy cream" },
+          { amount: "120", unit: "ml", item: "chicken broth" },
+          { amount: "75", unit: "g", item: "sun-dried tomatoes, drained & sliced" },
+          { amount: "100", unit: "g", item: "fresh baby spinach" },
+          { amount: "50", unit: "g", item: "parmesan cheese, freshly grated" },
           { amount: "1", unit: "tsp", item: "Italian seasoning, salt & black pepper" }
         ],
         steps: [
           "Season chicken cutlets with salt, pepper, and Italian seasoning on both sides.",
           "Heat olive oil in a skillet over medium-high heat. Sear chicken for 5 minutes each side until golden and cooked through. Transfer to a plate.",
           "In the same skillet, add minced garlic and sauté for 1 minute until fragrant.",
-          "Pour in chicken broth and heavy cream, scraping up any delicious browned bits from the pan.",
+          "Pour in chicken broth and heavy cream, scraping up any browned bits from the pan.",
           "Simmer gently, then stir in sun-dried tomatoes, parmesan, and spinach until wilted and velvety.",
           "Return chicken to skillet, spoon sauce over top, and serve warm with crusty bread."
         ],
@@ -660,11 +700,11 @@
         tags: ["Breakfast", "Brunch", "Vegetarian", "Quick"],
         imageUrl: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1200&q=80",
         ingredients: [
-          { amount: "2", unit: "thick slices", item: "country sourdough bread" },
-          { amount: "0.75", unit: "cup", item: "whole milk ricotta" },
-          { amount: "1", unit: "whole", item: "lemon, zested and juiced" },
-          { amount: "1", unit: "ripe", item: "avocado, thinly sliced" },
-          { amount: "2", unit: "large", item: "fresh pasture-raised eggs" },
+          { amount: "2", unit: "slice", item: "country sourdough bread" },
+          { amount: "180", unit: "g", item: "whole milk ricotta" },
+          { amount: "1", unit: "hele", item: "lemon, zested and juiced" },
+          { amount: "1", unit: "piece", item: "avocado, thinly sliced" },
+          { amount: "2", unit: "piece", item: "fresh pasture-raised eggs" },
           { amount: "1", unit: "tbsp", item: "chili crisp oil" },
           { amount: "1", unit: "pinch", item: "flaky sea salt and cracked pepper" }
         ],
@@ -676,45 +716,15 @@
           "Fan avocado slices across the top, crown with the poached egg, and drizzle with chili crisp."
         ],
         notes: "Greek yogurt or goat cheese make great substitutes for ricotta."
-      },
-      {
-        id: "starter-lava-cake",
-        title: "Molten Dark Chocolate Lava Cakes",
-        description: "Decadent single-portion warm chocolate cakes with an irresistible gooey liquid center.",
-        prepTime: 15,
-        cookTime: 12,
-        servings: 2,
-        difficulty: "Medium",
-        category: "Dessert",
-        tags: ["Dessert", "Baking", "Chocolate", "Indulgent"],
-        imageUrl: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=1200&q=80",
-        ingredients: [
-          { amount: "100", unit: "g", item: "high quality dark chocolate (70%), chopped" },
-          { amount: "60", unit: "g", item: "unsalted butter" },
-          { amount: "2", unit: "large", item: "eggs at room temperature" },
-          { amount: "3", unit: "tbsp", item: "granulated sugar" },
-          { amount: "2", unit: "tbsp", item: "all-purpose flour" },
-          { amount: "1", unit: "pinch", item: "fine sea salt" }
-        ],
-        steps: [
-          "Preheat oven to 200°C (400°F). Butter two ramekins and dust inside with cocoa powder.",
-          "Gently melt chocolate and butter together until smooth; set aside to cool slightly.",
-          "Whisk eggs and sugar together until light and frothy.",
-          "Fold melted chocolate and flour into eggs until just combined.",
-          "Divide batter into ramekins and bake for 11-12 minutes until edges are set but center remains soft.",
-          "Rest 2 minutes, then invert onto plates and serve immediately with vanilla gelato."
-        ],
-        notes: "Take care not to overbake so the center stays deliciously molten!"
       }
     ];
 
-    // Local Storage helpers for guaranteed offline & cross-tab sync
     function loadSavedLocalRecipes() {
       try {
         const stored = localStorage.getItem(LOCAL_RECIPES_KEY);
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
       } catch (e) {
         console.warn("Local storage read warning:", e);
@@ -730,9 +740,7 @@
       }
     }
 
-    // Initialize Database & Auth
     async function initializeDatabase() {
-      // 1. First populate state from local store to guarantee instant render
       state.recipes = loadSavedLocalRecipes();
       renderRecipeCards();
       updateCategoryPills();
@@ -767,7 +775,6 @@
       }
     }
 
-    // Subscribe to Firestore public recipes
     function subscribeToCloudRecipes() {
       if (!state.db) return;
       const recipesCol = collection(state.db, 'artifacts', state.appId, 'public', 'data', 'recipes');
@@ -794,11 +801,10 @@
             }
           }
         } else {
-          // If Firestore is empty, seed with current local state
           seedCloudRecipes(state.recipes);
         }
       }, (error) => {
-        console.warn("Firestore listener fallback to local state:", error);
+        console.warn("Firestore listener fallback:", error);
         showSyncIndicator(false);
       });
     }
@@ -815,7 +821,6 @@
       }
     }
 
-    // Categories
     const CATEGORIES = ['All', 'Dinner', 'Breakfast', 'Lunch', 'Dessert', 'Quick & Easy', 'Vegetarian', 'Snacks'];
 
     function updateCategoryPills() {
@@ -879,7 +884,6 @@
 
         return `
           <div class="group bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-xs hover:shadow-lg transition duration-200 flex flex-col cursor-pointer" onclick="app.viewRecipe('${recipe.id}')">
-            <!-- Card Image -->
             <div class="relative h-48 w-full bg-stone-100 overflow-hidden">
               <img 
                 src="${escapeHtml(imageUrl)}" 
@@ -902,7 +906,6 @@
               </span>
             </div>
 
-            <!-- Card Body -->
             <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
               <div>
                 <h3 class="font-serif font-bold text-lg text-stone-900 group-hover:text-culinary-600 transition line-clamp-1 mb-1">
@@ -929,7 +932,6 @@
       lucide.createIcons();
     }
 
-    // View Recipe
     function viewRecipe(recipeId) {
       const recipe = state.recipes.find(r => r.id === recipeId);
       if (!recipe) return;
@@ -1088,7 +1090,6 @@
       }
     }
 
-    // Kitchen Timer
     function playBeep() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1102,9 +1103,7 @@
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.6);
-      } catch (e) {
-        // quiet fallback
-      }
+      } catch (e) {}
     }
 
     function updateTimerDisplay() {
@@ -1153,7 +1152,6 @@
       document.getElementById('timer-toggle-btn').textContent = 'Start';
     }
 
-    // Modal Confirmation Dialog Handling (Guaranteed single callback dispatch)
     function openConfirmDialog(title, message, callback) {
       const modal = document.getElementById('confirm-modal');
       const titleEl = document.getElementById('confirm-modal-title');
@@ -1174,7 +1172,6 @@
       state.pendingConfirmAction = null;
     }
 
-    // Wire confirm modal buttons directly
     document.getElementById('confirm-cancel-btn').addEventListener('click', closeConfirmDialog);
     document.getElementById('confirm-accept-btn').addEventListener('click', () => {
       const action = state.pendingConfirmAction;
@@ -1184,7 +1181,6 @@
       }
     });
 
-    // Bulletproof Delete Logic
     function deleteCurrentRecipe() {
       if (!state.activeRecipe) return;
       const targetId = state.activeRecipe.id;
@@ -1200,20 +1196,16 @@
     function executeDelete(recipeId) {
       if (!recipeId) return;
 
-      // 1. Instantly purge from current in-memory state
       state.recipes = state.recipes.filter(r => r.id !== recipeId);
       state.activeRecipe = null;
 
-      // 2. Persist to local storage immediately
       saveLocalRecipes(state.recipes);
 
-      // 3. Immediately switch view and update UI
       showHomeView();
       renderRecipeCards();
       updateCategoryPills();
       showToast("Recipe deleted successfully");
 
-      // 4. Try Firestore cloud removal in the background without blocking UI
       if (state.db) {
         try {
           const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'recipes', recipeId);
@@ -1226,7 +1218,60 @@
       }
     }
 
-    // Save recipe logic
+    // Direct Image Upload Handling with High-Res Downscaling & Compression
+    function handleImageFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const loader = document.getElementById('image-upload-loading');
+      if (loader) loader.classList.remove('hidden');
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const tempImg = new Image();
+        tempImg.onload = function() {
+          // Downscale high-res phone pictures to max 1000px so it remains lightweight
+          const maxDim = 1000;
+          let width = tempImg.width;
+          let height = tempImg.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(tempImg, 0, 0, width, height);
+
+          // Compress to lightweight JPEG Data URL
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+          document.getElementById('recipe-input-image').value = compressedDataUrl;
+          updateEditorImagePreview(compressedDataUrl);
+
+          if (loader) loader.classList.add('hidden');
+          showToast("Photo uploaded & optimized!");
+        };
+        tempImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function toggleUrlInput() {
+      const container = document.getElementById('url-input-container');
+      container.classList.toggle('hidden');
+      if (!container.classList.contains('hidden')) {
+        document.getElementById('recipe-input-image').focus();
+      }
+    }
+
     async function handleSaveRecipe(e) {
       e.preventDefault();
       const saveBtn = document.getElementById('save-recipe-submit-btn');
@@ -1247,11 +1292,12 @@
         const notes = document.getElementById('recipe-input-notes').value.trim();
 
         const ingredientRows = document.querySelectorAll('#editor-ingredients-container .ingredient-row');
-        const ingredients = Array.from(ingredientRows).map(row => ({
-          amount: row.querySelector('.ing-amt').value.trim(),
-          unit: row.querySelector('.ing-unit').value.trim(),
-          item: row.querySelector('.ing-item').value.trim()
-        })).filter(i => i.item.length > 0);
+        const ingredients = Array.from(ingredientRows).map(row => {
+          const amt = row.querySelector('.ing-amt').value.trim();
+          const unit = row.querySelector('.ing-unit').value.trim();
+          const item = row.querySelector('.ing-item').value.trim();
+          return { amount: amt, unit, item };
+        }).filter(i => i.item.length > 0);
 
         const stepRows = document.querySelectorAll('#editor-steps-container .step-row');
         const steps = Array.from(stepRows).map(row => row.querySelector('.step-text').value.trim()).filter(Boolean);
@@ -1273,7 +1319,6 @@
           updatedAt: new Date().toISOString()
         };
 
-        // Update local memory & storage immediately
         const existingIdx = state.recipes.findIndex(r => r.id === id);
         if (existingIdx >= 0) {
           state.recipes[existingIdx] = recipeData;
@@ -1282,7 +1327,6 @@
         }
         saveLocalRecipes(state.recipes);
 
-        // Sync to cloud if available
         if (state.db) {
           try {
             const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'recipes', id);
@@ -1366,14 +1410,13 @@
         document.getElementById('editor-ingredients-container').innerHTML = '';
         document.getElementById('editor-steps-container').innerHTML = '';
         addIngredientRow('2', 'tbsp', 'Extra virgin olive oil');
-        addIngredientRow('1', 'pinch', 'Sea salt and fresh black pepper');
+        addIngredientRow('1', 'pinch', 'Sea salt and black pepper');
         addStepRow('Prep ingredients and slice veggies evenly.');
         addStepRow('Cook over medium heat until tender and golden.');
       }
 
       modal.classList.remove('hidden');
 
-      // Programmatic scroll reset to ensure top of form and title are never clipped
       if (modal) modal.scrollTop = 0;
       if (scrollBody) scrollBody.scrollTop = 0;
 
@@ -1384,15 +1427,46 @@
       document.getElementById('recipe-editor-modal').classList.add('hidden');
     }
 
+    // Fully Responsive Compact Row (Amount + Unit Dropdown/Manual + Item + Visible Trash)
     function addIngredientRow(amt = '', unit = '', item = '') {
       const container = document.getElementById('editor-ingredients-container');
       const row = document.createElement('div');
-      row.className = "flex items-center gap-2 ingredient-row";
+      row.className = "flex items-center gap-1.5 sm:gap-2 ingredient-row w-full";
+      
       row.innerHTML = `
-        <input type="text" placeholder="Amt" value="${escapeHtml(amt)}" class="w-16 px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-medium focus:ring-1 focus:ring-culinary-500 ing-amt">
-        <input type="text" placeholder="Unit" value="${escapeHtml(unit)}" class="w-20 px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-medium focus:ring-1 focus:ring-culinary-500 ing-unit">
-        <input type="text" placeholder="Ingredient name" value="${escapeHtml(item)}" required class="flex-1 px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium focus:ring-1 focus:ring-culinary-500 ing-item">
-        <button type="button" onclick="this.parentElement.remove()" class="w-8 h-8 flex items-center justify-center text-stone-300 hover:text-red-500 rounded-lg transition" title="Remove ingredient">
+        <!-- Amount: Compact width, shrink-0 -->
+        <input 
+          type="text" 
+          placeholder="Amt" 
+          value="${escapeHtml(amt)}" 
+          class="w-12 sm:w-14 shrink-0 px-2 py-2 rounded-xl border border-stone-200 text-xs font-semibold text-center focus:outline-none focus:ring-1 focus:ring-culinary-500 bg-white ing-amt"
+        >
+
+        <!-- Unit: Dropdown + Free Typing via HTML5 Datalist -->
+        <input 
+          type="text" 
+          list="culinary-units-list" 
+          placeholder="Unit" 
+          value="${escapeHtml(unit)}" 
+          class="w-16 sm:w-20 shrink-0 px-2 py-2 rounded-xl border border-stone-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-culinary-500 bg-white ing-unit"
+        >
+
+        <!-- Ingredient Name: Takes all available space without overflowing -->
+        <input 
+          type="text" 
+          placeholder="Ingredient name" 
+          value="${escapeHtml(item)}" 
+          required 
+          class="flex-1 min-w-0 px-2.5 sm:px-3 py-2 rounded-xl border border-stone-200 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-culinary-500 bg-white ing-item"
+        >
+
+        <!-- Delete Trash Button: Fixed shrink-0, always visible on mobile -->
+        <button 
+          type="button" 
+          onclick="this.parentElement.remove()" 
+          class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center text-stone-300 hover:text-red-500 active:text-red-600 rounded-xl hover:bg-red-50 transition" 
+          title="Remove ingredient"
+        >
           <i data-lucide="trash-2" class="w-4 h-4"></i>
         </button>
       `;
@@ -1400,15 +1474,16 @@
       lucide.createIcons();
     }
 
+    // Step Row (Indexed badge + Textarea + Always visible delete button)
     function addStepRow(text = '') {
       const container = document.getElementById('editor-steps-container');
       const index = container.children.length + 1;
       const row = document.createElement('div');
-      row.className = "flex items-start gap-2 step-row";
+      row.className = "flex items-start gap-1.5 sm:gap-2 step-row w-full";
       row.innerHTML = `
-        <span class="w-6 h-6 rounded-lg bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center shrink-0 mt-1">${index}</span>
-        <textarea rows="2" placeholder="Describe this cooking step..." required class="flex-1 px-3 py-2 rounded-xl border border-stone-200 text-xs text-stone-800 focus:ring-1 focus:ring-culinary-500 step-text">${escapeHtml(text)}</textarea>
-        <button type="button" onclick="this.parentElement.remove(); app.reindexStepRows();" class="w-8 h-8 flex items-center justify-center text-stone-300 hover:text-red-500 rounded-lg transition mt-0.5" title="Remove step">
+        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-stone-100 text-stone-600 text-xs font-bold flex items-center justify-center shrink-0 mt-1">${index}</span>
+        <textarea rows="2" placeholder="Describe cooking step..." required class="flex-1 min-w-0 px-3 py-2 rounded-xl border border-stone-200 text-xs text-stone-800 focus:outline-none focus:ring-1 focus:ring-culinary-500 step-text">${escapeHtml(text)}</textarea>
+        <button type="button" onclick="this.parentElement.remove(); app.reindexStepRows();" class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center text-stone-300 hover:text-red-500 active:text-red-600 rounded-xl hover:bg-red-50 transition mt-0.5" title="Remove step">
           <i data-lucide="trash-2" class="w-4 h-4"></i>
         </button>
       `;
@@ -1453,13 +1528,13 @@ Servings: 4
 Category: Dinner
 
 Ingredients:
-- 4 salmon fillets (6 oz each)
+- 4 salmon fillets (150 g each)
 - 4 tbsp honey
 - 3 tbsp low-sodium soy sauce
 - 1 tbsp fresh lemon juice
-- 4 cloves garlic, minced
+- 4 clove garlic, minced
 - 1 tbsp olive oil
-- 1/4 tsp crushed red pepper flakes
+- 1 pinch crushed red pepper flakes
 - 2 tbsp chopped fresh parsley
 
 Instructions:
@@ -1647,7 +1722,7 @@ Instructions:
     }
 
     function parseIngredientLine(text) {
-      const match = text.match(/^([\d\s\/.,-]+)?\s*(tbsp|tablespoons?|tsp|teaspoons?|cups?|oz|ounces?|g|grams?|kg|ml|lbs?|pounds?|pinch|cloves?|slices?|cans?|heads?)?\s*(.*)$/i);
+      const match = text.match(/^([\d\s\/.,-]+)?\s*(tbsp|tablespoons?|tsp|teaspoons?|cups?|oz|ounces?|g|grams?|kg|ml|l|dl|cl|lbs?|pounds?|pinch|cloves?|slices?|cans?|piece|stuks?|hele)?\s*(.*)$/i);
       if (match) {
         return {
           amount: (match[1] || '').trim(),
@@ -1667,7 +1742,6 @@ Instructions:
       return (hours * 60) + minutes;
     }
 
-    // Backup & Restore
     function exportDatabase() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.recipes, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -1689,7 +1763,7 @@ Instructions:
         try {
           const imported = JSON.parse(e.target.result);
           if (!Array.isArray(imported)) {
-            showToast("Invalid JSON format. Expected list of recipes.");
+            showToast("Invalid JSON format.");
             return;
           }
 
@@ -1726,7 +1800,6 @@ Instructions:
       showToast("Restored starter recipe catalog!");
     }
 
-    // Navigation and helpers
     function showHomeView() {
       document.getElementById('recipe-detail-view').classList.add('hidden');
       document.getElementById('recipe-list-view').classList.remove('hidden');
@@ -1843,6 +1916,8 @@ Instructions:
       reindexStepRows,
       updateEditorImagePreview,
       pickRandomCoverPhoto,
+      handleImageFileUpload,
+      toggleUrlInput,
       handleSaveRecipe,
       editCurrentRecipe,
       deleteCurrentRecipe,
