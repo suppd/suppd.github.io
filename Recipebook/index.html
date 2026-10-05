@@ -85,45 +85,45 @@
 </head>
 <body class="bg-amber-50/40 text-stone-800 font-sans antialiased min-h-screen flex flex-col selection:bg-culinary-500 selection:text-white">
 
-  <!-- Top Navigation -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 sm:h-20">
-        <!-- Logo -->
-        <div class="flex items-center gap-3 cursor-pointer" onclick="app.showHomeView()">
-          <div class="w-10 h-10 rounded-2xl bg-culinary-500 text-white flex items-center justify-center shadow-lg shadow-culinary-500/20">
-            <i data-lucide="utensils-crossed" class="w-5 h-5"></i>
+  <!-- Top Navigation (Optimized for Mobile & Desktop) -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-20 gap-2">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0" onclick="app.showHomeView()">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-culinary-500 text-white flex items-center justify-center shadow-md shadow-culinary-500/20">
+            <i data-lucide="utensils-crossed" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
           <div>
-            <h1 class="text-xl sm:text-2xl font-bold font-serif text-stone-900 tracking-tight flex items-center gap-2">
+            <h1 class="text-base sm:text-2xl font-bold font-serif text-stone-900 tracking-tight leading-tight">
               Savor<span class="text-culinary-600 font-sans font-medium">&</span>Share
             </h1>
-            <p class="text-xs text-stone-400 font-medium hidden sm:block">Cloud Kitchen & Recipe Book</p>
+            <p class="text-[10px] sm:text-xs text-stone-400 font-medium hidden sm:block">Cloud Kitchen & Recipe Book</p>
           </div>
         </div>
 
-        <!-- Sync Status & Action Buttons -->
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div id="sync-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <!-- Sync Status & Actions -->
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div id="sync-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Cloud Synced</span>
           </div>
 
           <!-- Quick Import Recipe Button -->
-          <button onclick="app.openImportModal()" class="px-3.5 py-2 text-stone-700 hover:text-culinary-600 hover:bg-stone-100 rounded-xl text-sm font-semibold transition flex items-center gap-1.5 border border-stone-200">
+          <button onclick="app.openImportModal()" class="p-2 sm:px-3 sm:py-2 text-stone-700 hover:text-culinary-600 hover:bg-stone-100 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 border border-stone-200" title="Quick Import Recipe">
             <i data-lucide="wand-2" class="w-4 h-4 text-culinary-500"></i>
             <span class="hidden md:inline">Quick Import</span>
           </button>
 
-          <!-- New Recipe Button -->
-          <button onclick="app.openRecipeEditor()" class="px-4 py-2 bg-culinary-500 hover:bg-culinary-600 active:scale-95 text-white rounded-xl text-sm font-semibold shadow-md shadow-culinary-500/25 transition flex items-center gap-2">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+          <!-- New Recipe Button (Clean, compact on mobile) -->
+          <button onclick="app.openRecipeEditor()" class="px-3 py-2 sm:px-4 sm:py-2 bg-culinary-500 hover:bg-culinary-600 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm sm:shadow-md sm:shadow-culinary-500/25 transition flex items-center gap-1.5 whitespace-nowrap">
+            <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]"></i>
             <span>New Recipe</span>
           </button>
 
           <!-- Settings / Export Dropdown Trigger -->
           <button onclick="app.toggleSettingsMenu()" class="p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-xl transition relative" title="Database & Backup">
-            <i data-lucide="more-vertical" class="w-5 h-5"></i>
+            <i data-lucide="more-vertical" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </button>
         </div>
       </div>
@@ -153,54 +153,38 @@
   </div>
 
   <!-- Main Application Body -->
-  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
     
     <!-- RECIPES DASHBOARD VIEW -->
-    <div id="recipe-list-view" class="space-y-6">
+    <div id="recipe-list-view" class="space-y-4 sm:space-y-6">
       
-      <!-- Hero Banner & Search Filter Bar -->
-      <div class="relative bg-gradient-to-r from-stone-900 to-stone-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-2xl">
-        <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-culinary-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="relative z-10 max-w-2xl">
-          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-culinary-500/20 text-culinary-200 border border-culinary-500/30 mb-3">
-            <i data-lucide="flame" class="w-3.5 h-3.5 text-culinary-500"></i> Fresh Inspiration Daily
-          </span>
-          <h2 class="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-white mb-2">
-            What are we cooking today?
-          </h2>
-          <p class="text-stone-300 text-sm sm:text-base mb-6">
-            Store, scale, and cross-sync your family heirloom meals, web-clipped favorites, and midnight desserts.
-          </p>
-
-          <!-- Search Input with Clear Button -->
-          <div class="relative max-w-lg">
-            <i data-lucide="search" class="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
-            <input 
-              id="search-input" 
-              type="text" 
-              placeholder="Search recipes, ingredients, tags..."
-              class="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-stone-400 text-sm rounded-2xl pl-12 pr-10 py-3.5 focus:outline-none focus:ring-2 focus:ring-culinary-500 transition shadow-inner"
-              oninput="app.handleSearch(this.value)"
-            >
-            <button id="clear-search-btn" onclick="app.clearSearch()" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white p-1">
-              <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
+      <!-- Standalone Sleek Search Bar (Replaces massive hero card) -->
+      <div class="relative w-full">
+        <i data-lucide="search" class="w-4 h-4 sm:w-5 sm:h-5 text-stone-400 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        <input 
+          id="search-input" 
+          type="text" 
+          placeholder="Search recipes, ingredients, tags..."
+          class="w-full bg-white border border-stone-200 text-stone-800 placeholder-stone-400 text-sm sm:text-base rounded-2xl pl-10 sm:pl-12 pr-10 py-2.5 sm:py-3.5 focus:outline-none focus:ring-2 focus:ring-culinary-500 focus:border-culinary-500 transition shadow-xs"
+          oninput="app.handleSearch(this.value)"
+        >
+        <button id="clear-search-btn" onclick="app.clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
       </div>
 
       <!-- Categories Filter Strip -->
-      <div class="flex items-center justify-between gap-4 overflow-x-auto pb-2 scrollbar-none">
-        <div class="flex items-center gap-2" id="category-pills">
+      <div class="flex items-center justify-between gap-3 overflow-x-auto pb-1 scrollbar-none">
+        <div class="flex items-center gap-1.5 sm:gap-2" id="category-pills">
           <!-- Populated by JS -->
         </div>
-        <div class="text-xs text-stone-500 font-medium whitespace-nowrap pl-2">
+        <div class="text-xs text-stone-400 font-medium whitespace-nowrap pl-1 shrink-0">
           <span id="matching-count">0</span> recipes
         </div>
       </div>
 
       <!-- Recipes Grid -->
-      <div id="recipe-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="recipe-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Recipe Cards injected here -->
       </div>
 
@@ -754,13 +738,26 @@
         });
 
         if (fetched.length === 0) {
-          // Seed initial starters into public collection
-          loadStarterRecipes(false);
+          // Check if local storage or memory has recipes to prevent wiping
+          if (state.recipes.length === 0) {
+            loadStarterRecipes(false);
+          }
         } else {
           state.recipes = fetched;
           renderRecipeCards();
           updateCategoryPills();
           showSyncIndicator(true);
+
+          // Update active recipe if modified
+          if (state.activeRecipe) {
+            const updatedActive = state.recipes.find(r => r.id === state.activeRecipe.id);
+            if (!updatedActive) {
+              // Recipe was deleted remotely
+              showHomeView();
+            } else {
+              state.activeRecipe = updatedActive;
+            }
+          }
         }
       }, (error) => {
         console.error("Firestore sync error:", error);
@@ -1348,26 +1345,35 @@
       }
     }
 
-    function deleteCurrentRecipe() {
+    async function deleteCurrentRecipe() {
       if (!state.activeRecipe) return;
       const rec = state.activeRecipe;
+      const recId = rec.id;
 
       openConfirmDialog(
         "Delete Recipe",
-        `Are you sure you want to permanently remove "${rec.title}"?`,
+        `Are you sure you want to permanently delete "${rec.title}"?`,
         async () => {
           try {
+            // Remove from local memory state immediately
+            state.recipes = state.recipes.filter(r => r.id !== recId);
+            state.activeRecipe = null;
+
+            // Delete from Firestore
             if (state.db) {
-              const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'recipes', rec.id);
+              const docRef = doc(state.db, 'artifacts', state.appId, 'public', 'data', 'recipes', recId);
               await deleteDoc(docRef);
-            } else {
-              state.recipes = state.recipes.filter(r => r.id !== rec.id);
-              renderRecipeCards();
             }
-            showToast("Recipe deleted");
+
+            renderRecipeCards();
             showHomeView();
+            showToast("Recipe deleted successfully");
           } catch (e) {
-            showToast("Error deleting recipe: " + e.message);
+            console.error("Error deleting recipe:", e);
+            // Even if remote deletion encountered an error, update local interface
+            renderRecipeCards();
+            showHomeView();
+            showToast("Deleted locally. Cloud error: " + e.message);
           }
         }
       );
@@ -1761,16 +1767,22 @@ Instructions:
       const cancelBtn = document.getElementById('confirm-cancel-btn');
       const okBtn = document.getElementById('confirm-accept-btn');
 
+      // Clone buttons to strip previous listeners cleanly
+      const newCancelBtn = cancelBtn.cloneNode(true);
+      const newOkBtn = okBtn.cloneNode(true);
+      cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+      okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+
       const cleanup = () => {
         modal.classList.add('hidden');
-        cancelBtn.onclick = null;
-        okBtn.onclick = null;
       };
 
-      cancelBtn.onclick = cleanup;
-      okBtn.onclick = () => {
+      newCancelBtn.onclick = cleanup;
+      newOkBtn.onclick = () => {
         cleanup();
-        onConfirm();
+        if (typeof onConfirm === 'function') {
+          onConfirm();
+        }
       };
 
       modal.classList.remove('hidden');
